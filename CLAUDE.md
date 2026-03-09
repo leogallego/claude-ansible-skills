@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A collection of **Claude Code skills** (SKILL.md files) for Ansible automation development. Each skill is a self-contained prompt that Claude Code can invoke to scaffold or review Ansible code following Red Hat Communities of Practice (CoP) good practices.
 
-This repo contains no executable code — only skill definitions and documentation. There are no build, lint, or test commands.
+This repo contains skill definitions, documentation, and a marketplace index for plugin installation. The only build command is the marketplace generator (see below).
 
 ## Repository Structure
 
@@ -35,10 +35,23 @@ The body is a markdown prompt that Claude Code follows when the skill is invoked
 
 The scaffold skills depend on the `ansible-creator` CLI tool for generating base skeletons (with manual fallback if not installed). The review skill can optionally use `ansible-lint` for cross-referencing. All skills depend on the Ansible CoP rules defined in the user's global `CLAUDE.md` and `redhat-cop-automation-good-practices-*.md`, with a fallback to https://github.com/redhat-cop/automation-good-practices when rules are not available locally.
 
+## Marketplace Plugin
+
+This repo is a Claude Code plugin marketplace. The index lives at `.claude-plugin/marketplace.json` and is generated from SKILL.md frontmatter.
+
+After adding or modifying any skill, regenerate the index:
+
+```bash
+node scripts/gen-marketplace.js
+```
+
+Always commit the updated `marketplace.json` alongside SKILL.md changes.
+
 ## Contributing New Skills
 
 - One directory per skill, containing a single `SKILL.md`
 - Use `snake_case` with hyphens for directory names (matching existing convention: `ansible-*`)
 - Skills should reference CLAUDE.md rules rather than duplicating them
 - Scaffold skills follow a gather-inputs → generate → customize → validate pattern
+- After creating a new skill, run `node scripts/gen-marketplace.js` to update the marketplace index
 - License: GPL-3.0-or-later

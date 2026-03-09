@@ -159,5 +159,5 @@ After creating all files, verify:
 ## Rules fallback
 
 If the rules are not available locally (no CLAUDE.md with Ansible rules or
-`redhat-cop-automation-good-practices-scrap.md`), fetch them from
+`redhat-cop-automation-good-practices-*.md`), fetch them from
 https://github.com/redhat-cop/automation-good-practices as a fallback.

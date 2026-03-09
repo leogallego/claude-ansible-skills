@@ -4,7 +4,7 @@ description: >-
   Review Ansible code against Red Hat CoP automation good practices.
   Use when the user wants to audit, lint, or review Ansible roles,
   playbooks, collections, or inventory for compliance with the rules
-  defined in CLAUDE.md and redhat-cop-automation-good-practices-scrap.md.
+  defined in CLAUDE.md and redhat-cop-automation-good-practices-*.md.
 user-invocable: true
 ---
 
@@ -12,7 +12,7 @@ user-invocable: true
 
 Review all Ansible code in the current project (or the path/files specified by
 the user) against every rule in CLAUDE.md and
-`redhat-cop-automation-good-practices-scrap.md`.
+`redhat-cop-automation-good-practices-*.md`.
 
 ## Review process
 
@@ -133,9 +133,9 @@ Classify every finding with one of these severity levels:
 - Do NOT skip any rule category — check all of them (unless the user
   requested a category filter).
 - When a category does not apply (e.g., no templates exist), mark it N/A.
-- Read `redhat-cop-automation-good-practices-scrap.md` for edge cases when a
+- Read `redhat-cop-automation-good-practices-*.md` for edge cases when a
   rule's applicability is unclear.
 - Be precise about line numbers and file paths.
 - If the rules are not available locally (no CLAUDE.md with Ansible rules or
-  `redhat-cop-automation-good-practices-scrap.md`), fetch them from
+  `redhat-cop-automation-good-practices-*.md`), fetch them from
   https://github.com/redhat-cop/automation-good-practices as a fallback.

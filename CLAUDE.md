@@ -12,8 +12,8 @@ This repo contains no executable code — only skill definitions and documentati
 
 Each subdirectory contains a single `SKILL.md` file defining one skill:
 
-- **ansible-cop-review/** — Reviews Ansible code against all Red Hat CoP rules. Audits roles, playbooks, collections, and inventory for compliance.
-- **ansible-scaffold-role/** — Scaffolds a new Ansible role. Uses `ansible-creator` inside collections, manual creation otherwise.
+- **ansible-cop-review/** — Reviews Ansible code against all Red Hat CoP rules. Supports severity classification (ERROR/WARNING/INFO), diff-aware reviews, category filtering, ansible-lint integration, parallel review with subagents, and auto-fix.
+- **ansible-scaffold-role/** — Scaffolds a new Ansible role with an interactive variable builder that generates realistic content based on what the role manages (packages, services, configs, etc.). Supports task componentization, smart handler generation, and falls back to manual creation when `ansible-creator` is unavailable.
 - **ansible-scaffold-collection/** — Scaffolds a new Ansible content collection using `ansible-creator`, then customizes for CoP compliance.
 - **ansible-scaffold-ee/** — Scaffolds a new Ansible execution environment project using `ansible-creator`.
 
@@ -33,7 +33,7 @@ The body is a markdown prompt that Claude Code follows when the skill is invoked
 
 ## Key Dependencies
 
-The scaffold skills depend on the `ansible-creator` CLI tool for generating base skeletons. The review skill depends on the Ansible CoP rules defined in the user's global `CLAUDE.md` and `redhat-cop-automation-good-practices-scrap.md`.
+The scaffold skills depend on the `ansible-creator` CLI tool for generating base skeletons (with manual fallback if not installed). The review skill can optionally use `ansible-lint` for cross-referencing. All skills depend on the Ansible CoP rules defined in the user's global `CLAUDE.md` and `redhat-cop-automation-good-practices-*.md`, with a fallback to https://github.com/redhat-cop/automation-good-practices when rules are not available locally.
 
 ## Contributing New Skills
 

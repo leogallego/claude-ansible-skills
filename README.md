@@ -35,39 +35,39 @@ Scaffold a new Ansible execution environment project using `ansible-creator`. Ge
 
 ## Installation
 
-Clone the repository:
+### Plugin install (recommended)
+
+Register the marketplace and install skills by name:
+
+```
+/plugin install marketplace https://github.com/leogallego/claude-ansible-skills
+/plugin install ansible-cop-review
+/plugin install ansible-scaffold-role
+/plugin install ansible-scaffold-collection
+/plugin install ansible-scaffold-ee
+```
+
+### Manual install (symlinks)
+
+Alternatively, clone and symlink individual skills.
+
+**Project-level** (single project):
 
 ```bash
 git clone https://github.com/leogallego/claude-ansible-skills.git
-```
-
-Then symlink the skills you want to use. Each skill directory contains a
-`SKILL.md` file that Claude Code discovers automatically.
-
-### Project-level (single project)
-
-Symlink a skill into your project's `.claude/skills/` directory. This makes
-the skill available only when working in that project:
-
-```bash
 cd ~/my-ansible-project
 mkdir -p .claude/skills
 ln -s ~/claude-ansible-skills/ansible-cop-review .claude/skills/ansible-cop-review
 ```
 
-### Profile-level (all projects)
-
-Symlink a skill into your Claude Code profile skills directory. This makes
-the skill available across all your projects:
+**Profile-level** (all projects):
 
 ```bash
 mkdir -p ~/.claude/skills
 ln -s ~/claude-ansible-skills/ansible-scaffold-role ~/.claude/skills/ansible-scaffold-role
 ```
 
-### All skills at once
-
-To install all skills at profile level:
+**All skills at once** at profile level:
 
 ```bash
 mkdir -p ~/.claude/skills

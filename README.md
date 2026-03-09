@@ -27,11 +27,23 @@ Scaffold a new Ansible role fully compliant with CoP rules.
 
 ### ansible-scaffold-collection
 
-Scaffold a new Ansible content collection using `ansible-creator`, then customize for full CoP compliance. Generates `galaxy.yml`, `meta/runtime.yml`, README, LICENSE, and optionally scaffolds initial roles.
+Scaffold a new Ansible content collection using `ansible-creator`, then customize for full CoP compliance.
+
+- Plugin scaffolding — generates modules, filters, lookup, and action plugin skeletons with proper docstrings and FQCN examples
+- Delegates role creation to the full ansible-scaffold-role skill process
+- CI/CD pipeline generation for GitHub Actions or GitLab CI (lint, test, build, publish)
+- Changelog setup with `antsibull-changelog`
+- Generates collection-level CLAUDE.md for future Claude Code sessions
+- Falls back to manual creation when `ansible-creator` is not installed
 
 ### ansible-scaffold-ee
 
-Scaffold a new Ansible execution environment project using `ansible-creator`. Generates `execution-environment.yml` with user-specified base image, collections, Python/system packages, and build steps.
+Scaffold a new Ansible execution environment project using `ansible-creator`.
+
+- Dependency introspection — auto-detects collections, roles, Python, and system deps from existing project files
+- External dependency files — generates `requirements.yml`, `requirements.txt`, and `bindep.txt` for non-trivial EEs
+- CI/CD pipeline generation for GitHub Actions or GitLab CI (build, test, push to registry)
+- Falls back to manual creation when `ansible-creator` is not installed
 
 ## Installation
 

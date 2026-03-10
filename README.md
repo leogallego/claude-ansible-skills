@@ -45,6 +45,16 @@ Scaffold a new Ansible execution environment project using `ansible-creator`.
 - CI/CD pipeline generation for GitHub Actions or GitLab CI (build, test, push to registry)
 - Falls back to manual creation when `ansible-creator` is not installed
 
+### ansible-zen
+
+Display the Zen of Ansible and review code against its 20 principles.
+
+- Display mode — prints the full Zen and explains a random principle with a practical example
+- Review mode — evaluates Ansible code for simplicity, readability, and clarity
+- Zen Score (1-10) rating with justification
+- Principle-grouped findings with before/after code improvements
+- Complements ansible-cop-review with philosophical guidance
+
 ## Installation
 
 ### Plugin install (recommended)
@@ -57,6 +67,7 @@ Register the marketplace and install skills by name:
 /plugin install ansible-scaffold-role
 /plugin install ansible-scaffold-collection
 /plugin install ansible-scaffold-ee
+/plugin install ansible-zen
 ```
 
 ### Manual install (symlinks)
@@ -97,6 +108,7 @@ Once installed, invoke skills in Claude Code with their slash command:
 /ansible-scaffold-role
 /ansible-scaffold-collection
 /ansible-scaffold-ee
+/ansible-zen
 ```
 
 ## Dependencies

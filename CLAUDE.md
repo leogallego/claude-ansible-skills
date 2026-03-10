@@ -16,6 +16,7 @@ Each subdirectory contains a single `SKILL.md` file defining one skill:
 - **ansible-scaffold-role/** — Scaffolds a new Ansible role with an interactive variable builder that generates realistic content based on what the role manages (packages, services, configs, etc.). Supports task componentization, smart handler generation, and falls back to manual creation when `ansible-creator` is unavailable.
 - **ansible-scaffold-collection/** — Scaffolds a new Ansible content collection with plugin scaffolding (modules, filters, lookup, action), CI/CD pipeline generation, `antsibull-changelog` setup, and collection-level CLAUDE.md. Delegates role creation to the full ansible-scaffold-role process.
 - **ansible-scaffold-ee/** — Scaffolds a new Ansible execution environment with dependency introspection from existing project files, external dependency files (`requirements.yml`, `requirements.txt`, `bindep.txt`), and CI/CD pipeline generation.
+- **ansible-zen/** — Displays the Zen of Ansible principles and reviews Ansible code against them for simplicity, readability, and clarity. Provides a Zen Score (1-10) and actionable recommendations. Complements ansible-cop-review with philosophical guidance.
 
 ## Skill File Format
 

@@ -1,0 +1,5 @@
+{
+  "name": "ansible-scaffold-role",
+  "version": "1.0.0",
+  "description": "Scaffold a new Ansible role following all Red Hat CoP good practices. Use when the user wants to create a new role. Leverages ansible-creator when running inside a collection, then customizes the output to comply with all CLAUDE.md rules."
+}

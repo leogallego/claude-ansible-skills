@@ -1,0 +1,5 @@
+{
+  "name": "ansible-scaffold-collection",
+  "version": "1.0.0",
+  "description": "Scaffold a new Ansible content collection following all Red Hat CoP good practices. Uses ansible-creator to generate the base structure, then customizes it for full compliance with CLAUDE.md rules."
+}

@@ -1,32 +1,86 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "claude-ansible-skills",
   "description": "Production-grade Claude Code Ansible skills following Red Hat CoP good practices",
-  "version": "1.0.0",
-  "skills": [
+  "owner": {
+    "name": "Leo Gallego",
+    "email": "leogallego@gmail.com"
+  },
+  "plugins": [
     {
       "name": "ansible-cop-review",
+      "source": "./ansible-cop-review",
       "description": "Review Ansible code against Red Hat CoP automation good practices. Use when the user wants to audit, lint, or review Ansible roles, playbooks, collections, or inventory for compliance with the rules defined in CLAUDE.md and redhat-cop-automation-good-practices-*.md.",
-      "path": "ansible-cop-review/SKILL.md"
+      "version": "1.0.0",
+      "author": {
+        "name": "Leo Gallego",
+        "email": "leogallego@gmail.com"
+      },
+      "repository": "https://github.com/leogallego/claude-ansible-skills",
+      "license": "GPL-3.0-or-later",
+      "tags": [
+        "ansible"
+      ]
     },
     {
       "name": "ansible-scaffold-collection",
+      "source": "./ansible-scaffold-collection",
       "description": "Scaffold a new Ansible content collection following all Red Hat CoP good practices. Uses ansible-creator to generate the base structure, then customizes it for full compliance with CLAUDE.md rules.",
-      "path": "ansible-scaffold-collection/SKILL.md"
+      "version": "1.0.0",
+      "author": {
+        "name": "Leo Gallego",
+        "email": "leogallego@gmail.com"
+      },
+      "repository": "https://github.com/leogallego/claude-ansible-skills",
+      "license": "GPL-3.0-or-later",
+      "tags": [
+        "ansible"
+      ]
     },
     {
       "name": "ansible-scaffold-ee",
+      "source": "./ansible-scaffold-ee",
       "description": "Scaffold a new Ansible execution environment project following good practices. Uses ansible-creator to generate the base structure, then customizes it based on user requirements.",
-      "path": "ansible-scaffold-ee/SKILL.md"
+      "version": "1.0.0",
+      "author": {
+        "name": "Leo Gallego",
+        "email": "leogallego@gmail.com"
+      },
+      "repository": "https://github.com/leogallego/claude-ansible-skills",
+      "license": "GPL-3.0-or-later",
+      "tags": [
+        "ansible"
+      ]
     },
     {
       "name": "ansible-scaffold-role",
+      "source": "./ansible-scaffold-role",
       "description": "Scaffold a new Ansible role following all Red Hat CoP good practices. Use when the user wants to create a new role. Leverages ansible-creator when running inside a collection, then customizes the output to comply with all CLAUDE.md rules.",
-      "path": "ansible-scaffold-role/SKILL.md"
+      "version": "1.0.0",
+      "author": {
+        "name": "Leo Gallego",
+        "email": "leogallego@gmail.com"
+      },
+      "repository": "https://github.com/leogallego/claude-ansible-skills",
+      "license": "GPL-3.0-or-later",
+      "tags": [
+        "ansible"
+      ]
     },
     {
       "name": "ansible-zen",
+      "source": "./ansible-zen",
       "description": "Display the Zen of Ansible principles and review Ansible code against them. Use when the user wants to see the Zen of Ansible, get philosophical guidance on their automation approach, or review code for simplicity, readability, and clarity based on the Zen principles.",
-      "path": "ansible-zen/SKILL.md"
+      "version": "1.0.0",
+      "author": {
+        "name": "Leo Gallego",
+        "email": "leogallego@gmail.com"
+      },
+      "repository": "https://github.com/leogallego/claude-ansible-skills",
+      "license": "GPL-3.0-or-later",
+      "tags": [
+        "ansible"
+      ]
     }
   ]
 }

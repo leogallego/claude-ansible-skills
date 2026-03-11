@@ -8,17 +8,23 @@ const owner = {
 
 const plugins = readdirSync('.', { withFileTypes: true })
   .filter(d => d.isDirectory() && !d.name.startsWith('.') && d.name !== 'scripts' && d.name !== 'node_modules' && d.name !== 'resources')
-  .filter(d => existsSync(join(d.name, 'SKILL.md')))
+  .filter(d => existsSync(join(d.name, 'skills')))
   .map(d => {
-    const content = readFileSync(join(d.name, 'SKILL.md'), 'utf8')
+    // Find the first SKILL.md inside skills/<name>/SKILL.md
+    const skillDirs = readdirSync(join(d.name, 'skills'), { withFileTypes: true })
+      .filter(sd => sd.isDirectory() && existsSync(join(d.name, 'skills', sd.name, 'SKILL.md')))
+    if (skillDirs.length === 0) return null
+
+    const firstSkill = skillDirs[0]
+    const content = readFileSync(join(d.name, 'skills', firstSkill.name, 'SKILL.md'), 'utf8')
     const frontmatter = content.match(/^---\n([\s\S]*?)\n---/)?.[1] || ''
-    const name = frontmatter.match(/^name:\s*(.+)$/m)?.[1]?.trim()
+    const name = frontmatter.match(/^name:\s*(.+)$/m)?.[1]?.trim() || d.name
     const descMatch = frontmatter.match(/^description:\s*>-\n([\s\S]*?)(?=\n\w|\n$)/m)
     const description = descMatch
       ? descMatch[1].split('\n').map(l => l.trim()).filter(Boolean).join(' ')
       : frontmatter.match(/^description:\s*(.+)$/m)?.[1]?.trim()
 
-    // Generate plugin.json for each skill
+    // Generate plugin.json for each plugin
     const pluginDir = join(d.name, '.claude-plugin')
     if (!existsSync(pluginDir)) mkdirSync(pluginDir, { recursive: true })
     const pluginJson = { name, version: '1.0.0', description }
@@ -35,6 +41,7 @@ const plugins = readdirSync('.', { withFileTypes: true })
       tags: ['ansible']
     }
   })
+  .filter(Boolean)
   .sort((a, b) => a.name.localeCompare(b.name))
 
 const marketplace = {

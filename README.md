@@ -55,11 +55,26 @@ Display the Zen of Ansible and review code against its 20 principles.
 - Principle-grouped findings with before/after code improvements
 - Complements ansible-cop-review with philosophical guidance
 
+## Project Structure
+
+Each top-level `ansible-*` directory is a standalone Claude Code **plugin** with:
+
+```
+ansible-cop-review/
+├── .claude-plugin/
+│   └── plugin.json          # Plugin metadata (name, version, description)
+└── skills/
+    └── ansible-cop-review/
+        └── SKILL.md          # Skill prompt definition
+```
+
+The root `.claude-plugin/marketplace.json` indexes all plugins for marketplace discovery.
+
 ## Installation
 
 ### Plugin install (recommended)
 
-Register the marketplace and install skills by name:
+Register the marketplace and install skills as plugins:
 
 ```
 /plugin install marketplace https://github.com/leogallego/claude-ansible-skills
@@ -72,7 +87,7 @@ Register the marketplace and install skills by name:
 
 ### Manual install (symlinks)
 
-Alternatively, clone and symlink individual skills.
+Alternatively, clone and symlink individual skill directories. Each skill lives inside `<plugin>/skills/<skill-name>/`.
 
 **Project-level** (single project):
 
@@ -80,22 +95,23 @@ Alternatively, clone and symlink individual skills.
 git clone https://github.com/leogallego/claude-ansible-skills.git
 cd ~/my-ansible-project
 mkdir -p .claude/skills
-ln -s ~/claude-ansible-skills/ansible-cop-review .claude/skills/ansible-cop-review
+ln -s ~/claude-ansible-skills/ansible-cop-review/skills/ansible-cop-review .claude/skills/ansible-cop-review
 ```
 
 **Profile-level** (all projects):
 
 ```bash
 mkdir -p ~/.claude/skills
-ln -s ~/claude-ansible-skills/ansible-scaffold-role ~/.claude/skills/ansible-scaffold-role
+ln -s ~/claude-ansible-skills/ansible-scaffold-role/skills/ansible-scaffold-role ~/.claude/skills/ansible-scaffold-role
 ```
 
 **All skills at once** at profile level:
 
 ```bash
 mkdir -p ~/.claude/skills
-for skill in ~/claude-ansible-skills/ansible-*/; do
-  ln -s "$skill" ~/.claude/skills/$(basename "$skill")
+for plugin in ~/claude-ansible-skills/ansible-*/; do
+  skill=$(basename "$plugin")
+  ln -s "$plugin/skills/$skill" ~/.claude/skills/"$skill"
 done
 ```
 

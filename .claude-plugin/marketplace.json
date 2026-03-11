@@ -10,7 +10,7 @@
     {
       "name": "ansible-cop-review",
       "source": "./ansible-cop-review",
-      "description": "Review Ansible code against Red Hat CoP automation good practices. Use when the user wants to audit, lint, or review Ansible roles, playbooks, collections, or inventory for compliance with the rules defined in CLAUDE.md and redhat-cop-automation-good-practices-*.md.",
+      "description": "Review Ansible code against Red Hat CoP automation good practices. Use when the user wants to audit, lint, review, check, or validate Ansible roles, playbooks, collections, or inventory for compliance with CoP rules. Use when user says \"lint my role\", \"check my playbook\", \"review best practices\", or \"audit my Ansible code\". Do NOT use for general Python or YAML linting unrelated to Ansible.",
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",
@@ -25,7 +25,7 @@
     {
       "name": "ansible-scaffold-collection",
       "source": "./ansible-scaffold-collection",
-      "description": "Scaffold a new Ansible content collection following all Red Hat CoP good practices. Uses ansible-creator to generate the base structure, then customizes it for full compliance with CLAUDE.md rules.",
+      "description": "Scaffold a new Ansible content collection following all Red Hat CoP good practices. Use when the user wants to create, generate, or bootstrap a new Ansible collection. Use when user says \"create a collection\", \"new collection\", \"scaffold collection\", or \"init collection\". Leverages ansible-creator when available. Do NOT use for reviewing existing collections (use ansible-cop-review instead).",
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",
@@ -40,7 +40,7 @@
     {
       "name": "ansible-scaffold-ee",
       "source": "./ansible-scaffold-ee",
-      "description": "Scaffold a new Ansible execution environment project following good practices. Uses ansible-creator to generate the base structure, then customizes it based on user requirements.",
+      "description": "Scaffold a new Ansible execution environment project following good practices. Use when the user wants to create, generate, or bootstrap a new EE. Use when user says \"create an EE\", \"new execution environment\", \"scaffold EE\", or \"build EE project\". Leverages ansible-creator when available. Do NOT use for building existing EEs or managing containers.",
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",
@@ -55,7 +55,7 @@
     {
       "name": "ansible-scaffold-role",
       "source": "./ansible-scaffold-role",
-      "description": "Scaffold a new Ansible role following all Red Hat CoP good practices. Use when the user wants to create a new role. Leverages ansible-creator when running inside a collection, then customizes the output to comply with all CLAUDE.md rules.",
+      "description": "Scaffold a new Ansible role following all Red Hat CoP good practices. Use when the user wants to create, generate, or bootstrap a new Ansible role. Use when user says \"create a role\", \"new role\", \"scaffold role\", or \"generate role skeleton\". Leverages ansible-creator when available. Do NOT use for reviewing existing roles (use ansible-cop-review instead).",
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",
@@ -70,7 +70,7 @@
     {
       "name": "ansible-zen",
       "source": "./ansible-zen",
-      "description": "Display the Zen of Ansible principles and review Ansible code against them. Use when the user wants to see the Zen of Ansible, get philosophical guidance on their automation approach, or review code for simplicity, readability, and clarity based on the Zen principles.",
+      "description": "Display the Zen of Ansible principles and review Ansible code against them. Use when the user wants to see the Zen of Ansible, get philosophical guidance on their automation approach, or review code for simplicity, readability, and clarity. Use when user says \"zen of ansible\", \"simplify my playbook\", \"is this too complex\", or \"clean code review\". Do NOT use for strict rule compliance (use ansible-cop-review instead).",
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",

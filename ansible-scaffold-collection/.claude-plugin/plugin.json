@@ -1,5 +1,5 @@
 {
   "name": "ansible-scaffold-collection",
   "version": "1.0.0",
-  "description": "Scaffold a new Ansible content collection following all Red Hat CoP good practices. Uses ansible-creator to generate the base structure, then customizes it for full compliance with CLAUDE.md rules."
+  "description": "Scaffold a new Ansible content collection following all Red Hat CoP good practices. Use when the user wants to create, generate, or bootstrap a new Ansible collection. Use when user says \"create a collection\", \"new collection\", \"scaffold collection\", or \"init collection\". Leverages ansible-creator when available. Do NOT use for reviewing existing collections (use ansible-cop-review instead)."
 }

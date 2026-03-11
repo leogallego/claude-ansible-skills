@@ -133,6 +133,55 @@ Once installed, invoke skills in Claude Code with their slash command:
 - **ansible-lint** — used by the review skill for cross-referencing (optional)
 - **CoP rules** — skills reference rules from your CLAUDE.md and `redhat-cop-automation-good-practices-*.md`. If not available locally, they fetch from https://github.com/redhat-cop/automation-good-practices
 
+## Contributing
+
+We welcome contributions from the community. This project follows the
+[Red Hat Communities of Practice contributing guidelines](https://redhat-cop.github.io/contrib/).
+
+### Development workflow
+
+1. **Fork** the repository
+2. **Create a branch** for your work
+3. **Open a pull request** following the guidelines below
+4. **Address reviewer feedback**
+5. A maintainer will merge once approved — do not merge your own PRs
+
+### Adding a new skill
+
+1. Create a directory named `ansible-<skill-name>/`
+2. Add `.claude-plugin/plugin.json` with name, version, and description
+3. Add `skills/<skill-name>/SKILL.md` with frontmatter and prompt body
+4. Follow the [SKILL.md format](https://code.claude.com/docs/en/skills):
+   - Description must include what the skill does, when to use it, and
+     trigger phrases users would say
+   - Add `argument-hint` if the skill accepts arguments
+   - Add `disable-model-invocation: true` for skills with side effects
+   - Keep SKILL.md under 500 lines; move detailed docs to `references/`
+5. Skills should reference CLAUDE.md rules rather than duplicating them
+6. Run `node scripts/gen-marketplace.js` to regenerate the marketplace index
+7. Commit the updated `marketplace.json` alongside your changes
+
+### Modifying existing skills
+
+- Read the skill's SKILL.md before modifying — understand the full prompt
+- After changes, run `node scripts/gen-marketplace.js` to update plugin metadata
+- Squash commits whenever possible
+
+### Best practices
+
+- Write clear, descriptive PR titles and summaries
+- Do not commit directly to the main branch
+- Review existing skills to prevent duplication
+- Test your skill by invoking it with `/skill-name` in Claude Code
+- Use `snake_case` with hyphens for directory names (matching `ansible-*`)
+
+### Reporting issues
+
+Open an issue on GitHub for:
+- Bug reports — describe the skill, the input, and the unexpected behavior
+- Feature requests — describe the use case and the expected outcome
+- Rule updates — if Red Hat CoP good practices change upstream
+
 ## License
 
 GPL-3.0-or-later

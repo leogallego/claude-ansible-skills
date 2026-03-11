@@ -1,0 +1,5 @@
+{
+  "name": "ansible-cop-review",
+  "version": "1.0.0",
+  "description": "Review Ansible code against Red Hat CoP automation good practices. Use when the user wants to audit, lint, or review Ansible roles, playbooks, collections, or inventory for compliance with the rules defined in CLAUDE.md and redhat-cop-automation-good-practices-*.md."
+}

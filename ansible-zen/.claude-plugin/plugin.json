@@ -1,0 +1,5 @@
+{
+  "name": "ansible-zen",
+  "version": "1.0.0",
+  "description": "Display the Zen of Ansible principles and review Ansible code against them. Use when the user wants to see the Zen of Ansible, get philosophical guidance on their automation approach, or review code for simplicity, readability, and clarity based on the Zen principles."
+}

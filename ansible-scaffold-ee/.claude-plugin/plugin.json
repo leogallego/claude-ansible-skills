@@ -1,0 +1,5 @@
+{
+  "name": "ansible-scaffold-ee",
+  "version": "1.0.0",
+  "description": "Scaffold a new Ansible execution environment project following good practices. Uses ansible-creator to generate the base structure, then customizes it based on user requirements."
+}

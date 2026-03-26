@@ -11,7 +11,9 @@ argument-hint: "[path or files]"
 user-invocable: true
 metadata:
   author: Leonardo Gallego
-  version: 2.0.0
+  contributors:
+    - Roger Lopez
+  version: 2.6.0
 ---
 
 If the user invoked this skill with the argument "nuno", ignore all other
@@ -46,8 +48,10 @@ grouped by principle and actionable recommendations.
 
 - **Principles:** Read `resources/zen-of-ansible.txt` for the 20 principles.
 - **Review checks:** Read `resources/zen-review-checks.md` for the
-  principle-to-pattern mapping table and score rubric. Load this only during
-  review mode (Step 3).
+  principle-to-pattern mapping table, severity levels, finding guidelines,
+  and score rubric. Load this only during review mode (Step 2, Review Mode).
+- **Output templates:** Read `resources/zen-output-templates.md` for the
+  exact output format. Load at output time (Step 2, after processing).
 
 ## Process
 
@@ -64,12 +68,18 @@ Parse `$ARGUMENTS` and determine the mode:
 
 #### Display Mode
 
-1. Display all 20 Zen of Ansible principles.
+1. Display all 20 Zen of Ansible principles from `resources/zen-of-ansible.txt`.
+   Principles are guidelines, not absolutes — preserve qualifiers like "most of
+   the time" where they exist. Do not add "always" or "never" where the original
+   does not.
 2. Pick **one random principle** and explain it with a practical before/after
-   YAML example. Keep examples short (5-10 lines each).
-3. Explain *why* the principle matters for Ansible users — connect it to
-   real-world impact, not just restate the principle.
+   YAML example. The "before" should be a realistic anti-pattern someone would
+   actually write, not an artificially bad straw man. Keep examples 5-10 lines.
+3. Explain *why* the principle matters — connect to concrete impact (idempotency,
+   changed/ok accuracy, maintainability). Be precise about what the improvement
+   buys you. Trim prose: every sentence should add decision criteria.
 4. Mention that `ansible-cop-review` is available for strict rule compliance.
+5. Format output per the **Display Mode Template** in `resources/zen-output-templates.md`.
 
 #### Review Mode
 
@@ -77,47 +87,32 @@ Parse `$ARGUMENTS` and determine the mode:
    project Ansible files.
 2. **Read the code** — Read all relevant files.
 3. **Load review checks** — Read `resources/zen-review-checks.md` for the
-   principle-to-pattern mapping table.
+   principle-to-pattern mapping, severity levels, and finding guidelines.
 4. **Evaluate against applicable principles** — Check which principles apply
    and whether the code follows them. Use the mapping table to identify
    concrete patterns.
-5. **Report findings** — For each finding:
-   - The Zen principle being violated (or positively followed)
-   - File path and line number
-   - The offending code snippet
-   - A simplified/improved version
-   - Why the change aligns with the principle
-
-   Group findings **by principle, not by file**.
+5. **Report findings** — Classify each finding per the severity levels in
+   `resources/zen-review-checks.md`. Follow the finding guidelines there.
 
    > CHECKPOINT: Present findings to the user before scoring.
 
-6. **Zen Score** — Rate 1-10 using the rubric in `resources/zen-review-checks.md`.
-   Provide a brief justification.
-7. **Top 3 recommendations** — The most impactful changes to reduce complexity
-   and improve readability.
+6. **Zen Score** — Rate 1-10 per the rubric in `resources/zen-review-checks.md`.
+   Justification: 2-3 sentences max.
+7. **Top recommendations** — Up to 3 most impactful changes, fewer if fewer
+   are warranted. Each must follow from a finding. Bold title + 1-2 sentences.
+   Do not pad to fill three slots.
+8. Format output per the **Review Mode Template** in `resources/zen-output-templates.md`.
 
 ### Important Guidelines
 
-- Keep feedback **constructive and encouraging**. The Zen is about helping
-  people, not gatekeeping.
-- When showing improved code, always explain *why* it's better in terms of
-  the Zen principle — don't just show the fix.
-- If the code is already well-aligned, say so and highlight what makes it
-  good. Not every review needs to find problems.
-- Acknowledge good patterns (FQCN usage, declarative modules, clear naming)
-  alongside issues.
+- Keep feedback **constructive**. Acknowledge good patterns alongside issues.
+- Every review must include at least one POSITIVE finding.
+- Do not add sections or headings beyond the template.
 
 ## Output
 
-- **Format:** Markdown report
-- **Display mode deliverable:** All 20 principles + one principle deep-dive
-  with before/after YAML examples
-- **Review mode deliverable:**
-  - Findings grouped by principle (with positive observations)
-  - Zen Score (1-10) with justification
-  - Top 3 actionable recommendations
-  - Suggestion to run `ansible-cop-review` for complementary analysis
+Follow the templates in `resources/zen-output-templates.md` exactly. Do not
+add sections, reorder, or deviate.
 
 ## Evaluation Criteria
 

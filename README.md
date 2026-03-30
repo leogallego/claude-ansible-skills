@@ -77,7 +77,7 @@ The root `.claude-plugin/marketplace.json` indexes all plugins for marketplace d
 Register the marketplace and install skills as plugins:
 
 ```
-/plugin install marketplace https://github.com/leogallego/claude-ansible-skills
+/plugin marketplace add https://github.com/leogallego/claude-ansible-skills
 /plugin install ansible-cop-review
 /plugin install ansible-scaffold-role
 /plugin install ansible-scaffold-collection

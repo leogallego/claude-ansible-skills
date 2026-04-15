@@ -4,10 +4,11 @@ A collection of [Claude Code](https://claude.ai/code) skills for Ansible automat
 
 ## Skills
 
-### ansible-cop-review
+### ansible-good-practices
 
-Review Ansible code against all Red Hat CoP automation good practices.
+Review Ansible code against Red Hat CoP automation good practices loaded from per-section AsciiDoc references.
 
+- Section-selective loading — loads only the reference sections relevant to the files being reviewed
 - Severity classification: ERROR, WARNING, INFO
 - Diff-aware mode — review only changed files
 - Category filtering — focus on specific rule categories
@@ -53,18 +54,18 @@ Display the Zen of Ansible and review code against its 20 principles.
 - Review mode — evaluates Ansible code for simplicity, readability, and clarity
 - Zen Score (1-10) rating with justification
 - Principle-grouped findings with before/after code improvements
-- Complements ansible-cop-review with philosophical guidance
+- Complements ansible-good-practices with philosophical guidance
 
 ## Project Structure
 
 Each top-level `ansible-*` directory is a standalone Claude Code **plugin** with:
 
 ```
-ansible-cop-review/
+ansible-good-practices/
 ├── .claude-plugin/
 │   └── plugin.json          # Plugin metadata (name, version, description)
 └── skills/
-    └── ansible-cop-review/
+    └── ansible-good-practices/
         └── SKILL.md          # Skill prompt definition
 ```
 
@@ -78,7 +79,7 @@ Register the marketplace and install skills as plugins:
 
 ```
 /plugin marketplace add https://github.com/leogallego/claude-ansible-skills
-/plugin install ansible-cop-review
+/plugin install ansible-good-practices
 /plugin install ansible-scaffold-role
 /plugin install ansible-scaffold-collection
 /plugin install ansible-scaffold-ee
@@ -95,7 +96,7 @@ Alternatively, clone and symlink individual skill directories. Each skill lives 
 git clone https://github.com/leogallego/claude-ansible-skills.git
 cd ~/my-ansible-project
 mkdir -p .claude/skills
-ln -s ~/claude-ansible-skills/ansible-cop-review/skills/ansible-cop-review .claude/skills/ansible-cop-review
+ln -s ~/claude-ansible-skills/ansible-good-practices/skills/ansible-good-practices .claude/skills/ansible-good-practices
 ```
 
 **Profile-level** (all projects):
@@ -120,7 +121,7 @@ done
 Once installed, invoke skills in Claude Code with their slash command:
 
 ```
-/ansible-cop-review
+/ansible-good-practices
 /ansible-scaffold-role
 /ansible-scaffold-collection
 /ansible-scaffold-ee
@@ -131,7 +132,7 @@ Once installed, invoke skills in Claude Code with their slash command:
 
 - **ansible-creator** — used by scaffold skills to generate base skeletons (optional — skills fall back to manual creation)
 - **ansible-lint** — used by the review skill for cross-referencing (optional)
-- **CoP rules** — skills reference rules from your CLAUDE.md and `redhat-cop-automation-good-practices-*.md`. If not available locally, they fetch from https://github.com/redhat-cop/automation-good-practices
+- **CoP rules** — skills load rules from bundled `references/*.adoc` files (per-section AsciiDoc from [redhat-cop/automation-good-practices](https://github.com/redhat-cop/automation-good-practices)), with GitHub fetch as fallback and CLAUDE.md as last resort
 
 ## Contributing
 

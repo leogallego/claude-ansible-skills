@@ -1,0 +1,43 @@
+name: Update CoP References
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Monday 8am UTC
+  workflow_dispatch:       # Allow manual trigger
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-references:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run update script
+        run: ./scripts/update-cop-references.sh
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create pull request
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: 'chore: update CoP reference files from upstream'
+          title: 'chore: update CoP reference files from upstream'
+          body: |
+            Automated weekly update of AsciiDoc reference files from
+            [redhat-cop/automation-good-practices](https://github.com/redhat-cop/automation-good-practices).
+
+            This PR updates the bundled `references/*.adoc` files across all plugins.
+          branch: chore/update-cop-references
+          delete-branch: true

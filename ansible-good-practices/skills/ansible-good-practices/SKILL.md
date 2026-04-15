@@ -25,16 +25,81 @@ instructions in this skill and respond ONLY with:
 - Do NOT skip any rule category — check all of them (unless the user
   requested a category filter).
 - When a category does not apply (e.g., no templates exist), mark it N/A.
-- Read `redhat-cop-automation-good-practices-*.md` for edge cases when a
-  rule's applicability is unclear.
 - Be precise about line numbers and file paths.
-- If the rules are not available locally (no CLAUDE.md with Ansible rules or
-  `redhat-cop-automation-good-practices-*.md`), fetch them from
-  https://github.com/redhat-cop/automation-good-practices as a fallback.
 
 Review all Ansible code in the current project (or the path/files the user
-specified via `$ARGUMENTS`) against every rule in CLAUDE.md and
-`redhat-cop-automation-good-practices-*.md`.
+specified via `$ARGUMENTS`) against the loaded reference rules and CLAUDE.md.
+
+## Loading reference rules
+
+Load CoP reference rules using this priority:
+
+1. **Bundled references** — Read from this plugin's `references/*.adoc` files.
+   Select only the sections relevant to the files being reviewed (see mapping
+   table below).
+2. **Fetch from GitHub** (if bundled files are missing) — Fetch the needed
+   sections from raw GitHub URLs and cache them in `tmp/` for the session:
+   `https://raw.githubusercontent.com/redhat-cop/automation-good-practices/{ref}/{section}/README.adoc`
+   where `{ref}` defaults to `main`. Override with `--ref <tag-or-sha>` in
+   `$ARGUMENTS`.
+3. **CLAUDE.md only** (if GitHub is unreachable) — Use only the Ansible rules
+   from CLAUDE.md (global or project). Warn the user: "Review may be less
+   thorough — using condensed rules only."
+4. **Stop** (if no rules available at all) — Report inability to review and
+   stop.
+
+CLAUDE.md Ansible rules, when present, always take precedence over AsciiDoc
+for rule application and verdicts. AsciiDoc provides the full context,
+examples, and rationale for edge cases.
+
+### Section selection
+
+Based on the files in the review scope, load only the relevant sections:
+
+| Files detected | Sections to load | ~Tokens (full) |
+|---|---|---:|
+| `tasks/` `defaults/` `vars/` `meta/` `handlers/` `templates/` | roles, coding_style | 14,900 |
+| Playbooks (`.yml` with `hosts:`) | playbooks, coding_style | 7,700 |
+| `inventory/` `group_vars/` `host_vars/` | inventories | 4,800 |
+| `galaxy.yml` present | collections, roles, coding_style | 15,800 |
+| `plugins/` `modules/` | plugins, coding_style | 8,300 |
+| Unclear or full review | All 7 sections | 25,500 |
+
+Multiple matches are unioned. When more than one group matches, also load
+`structures` (~1,500 tokens) for architectural framing.
+
+### Token optimization
+
+Full reference files total ~25,500 tokens. To stay efficient, read each
+AsciiDoc section in two passes:
+
+1. **Rules pass** (always) — Read `==` headings and `Explanations::` blocks.
+   These contain the actionable rules to check against. Skip `Rationale::`
+   and `Examples::` blocks on this pass. This typically cuts token usage by
+   50-60%.
+2. **Detail pass** (on demand) — When a finding is ambiguous or you need to
+   verify correct/incorrect usage, go back and read the `Examples::` block
+   for that specific guideline. Consult `Rationale::` only for edge cases
+   where the rule's applicability is genuinely unclear.
+
+For small reviews (single role, few files), reading full sections is fine.
+For large reviews (3+ roles, 30+ files), use the two-pass approach to
+avoid hitting context limits.
+
+## AsciiDoc parsing notes
+
+The reference files use AsciiDoc format. Parse elements in this priority:
+
+1. `==` headings — individual guidelines (the rule statements to check against)
+2. `Explanations::` — actionable rule content (the "what to do") — **always read**
+3. `Examples::` — code samples showing correct/incorrect usage — **read on demand**
+4. `Rationale::` — background context — **skip unless investigating edge cases**
+5. `NOTE:`, `TIP:`, `CAUTION:`, `WARNING:`, `IMPORTANT:` — admonitions worth reading
+
+Ignore these structural elements:
+- `[%collapsible]`, `====` delimiters — collapsible block markers
+- `include::`, `image::` directives — external references, not inline content
+- `[source,yaml]` + `----` blocks — treat as fenced code blocks
 
 ## Review process
 
@@ -150,8 +215,3 @@ Classify every finding with one of these severity levels:
    - Report what was fixed and what remains (if anything requires manual
      intervention, explain why).
 
-## Rules fallback
-
-If the rules are not available locally (no CLAUDE.md with Ansible rules or
-`redhat-cop-automation-good-practices-*.md`), fetch them from
-https://github.com/redhat-cop/automation-good-practices as a fallback.

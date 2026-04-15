@@ -95,7 +95,7 @@ See section "Wrap longer lines of code" for more information about line wrapping
 +
 [%collapsible]
 ====
-Rationale:: Ansible will `and` the list elements together (https://docs.ansible.com/ansible/latest/user_guide/playbooks_conditionals.html#basic-conditionals-with-when[Ansible UseGuide >> Conditionals]).
+Rationale:: Ansible will `and` the list elements together (https://docs.ansible.com/ansible/latest/user_guide/playbooks_conditionals.html#basic-conditionals-with-when[Ansible UseGuide » Conditionals]).
 Multiple conditions that all need to be true (a logical `and`) can also be specified as a list, but beware of bare variables in `when:`.
 Examples::
 +
@@ -255,7 +255,7 @@ tasks:
 [%collapsible]
 ====
 Rationale:: a fact set using `set_fact` can not be unset and it will override the role default or role variable in all subsequent invocations of the role in the same playbook.
-A fact has a different priority than other variables and not the highest, so in some cases overriding a given parameter will not work because the parameter has a higher priority (https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable[Ansible User Guide >> Using Variables])
+A fact has a different priority than other variables and not the highest, so in some cases overriding a given parameter will not work because the parameter has a higher priority (https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable[Ansible User Guide » Using Variables])
 ====
 
 * Use the smallest scope for variables.

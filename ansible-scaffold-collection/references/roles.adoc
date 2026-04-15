@@ -13,10 +13,10 @@ Rationale::
 Try to design roles focused on the functionality, not on the software implementation behind it.
 This will help abstracting differences between different providers, and help the user to focus on the functionality, not on technical details.
 
-Examples::
+Examples:: 
 For an example, designing a role to implement an NTP configuration on a server would be a role.
 The role internally would have the logic to decide whether to use ntpd, chronyd, and the ntp site configurations.
-However, when the underlying implementations become too divergent, for example implementing an email server with postfix or sendmail, then
+However, when the underlying implementations become too divergent, for example implementing an email server with postfix or sendmail, then 
 separate roles are encouraged.
 
 Design roles to accomplish a specific, guaranteed outcome and limit the scope of the role to that outcome.
@@ -25,7 +25,7 @@ This will help abstracting differences between different providers (see above), 
 
 * Design the interface focused on the functionality, not on the software implementation behind it.
 +
-[%collapsible]
+[%collapsible]                                                                                                        
 ====
 Explanations:: Limit the consumer's need to understand specific implementation details about a collection, the role names within, and the file names. Presenting the collection as a low-code/no-code "automation application" provides the developer flexibility as the content grows and matures, and limits change the consumer may have to make in a later version.
 
@@ -62,14 +62,14 @@ Examples::
   gather_facts: false
   tasks:
   - name: Do thing_1
-    include_role:
+    include_role: 
       name: mycollection.thing_1
       tasks_from: thing_1.yaml
       vars:
         thing_1_var_1: 1
         thing_1_var_2: 2
   - name: Do thing_2
-    include_role:
+    include_role: 
       name: mycollection.thing_2
       tasks_from: thing_2.yaml
       vars:
@@ -101,8 +101,8 @@ Rationale:: A consistent file tree structure will help drive consistency and reu
 === Role Distribution
 [%collapsible]
 ====
-Explanations:: Use https://semver.org/[semantic versioning] for Git release tags.
-Use 0.y.z before the role is declared stable (interface-wise).
+Explanations:: Use https://semver.org/[semantic versioning] for Git release tags.  
+Use 0.y.z before the role is declared stable (interface-wise).  
 
 Rationale:: There are some https://github.com/ansible/ansible/issues/67512[restrictions] for Ansible Galaxy and Automation Hub.
 The versioning must be in strict X.Y.Z[ab][W] format, where X, Y, and Z are integers.
@@ -154,11 +154,11 @@ Exporting `$ROLENAME_provider_os_default` allows the users to set `$ROLENAME_pro
 [%collapsible]
 ====
 Explanations:: Avoid testing for distribution and version in tasks.
-Rather add a variable file to "vars/" for each supported distribution and version with the variables that need to change according to the distribution and version.
+Rather add a variable file to "vars/" for each supported distribution and version with the variables that need to change according to the distribution and version. 
 
-Rationale::
+Rationale:: 
 This way it is easy to add support to a new distribution by simply dropping a new file in to "vars/", see below <<supporting-multiple-distributions-and-versions,Supporting multiple distributions and versions>>.
-See also <<vars-vs-defaults,Vars vs Defaults>> which mandates "Avoid embedding large lists or 'magic values' directly into the playbook."
+See also <<vars-vs-defaults,Vars vs Defaults>> which mandates "Avoid embedding large lists or 'magic values' directly into the playbook." 
 Since distribution-specific values are kind of "magic values", it applies to them.
 The same logic applies for providers: a role can load a provider-specific variable file, include a provider-specific task file, or both, as needed.
 Consider making paths to templates internal variables if you need different templates for different distributions.
@@ -169,7 +169,7 @@ Consider making paths to templates internal variables if you need different temp
 ====
 Rationale::
 Packaging roles as a collection allows you to distribute many roles in a single cohesive unit of re-usable automation.
-Inside a collection, you can share custom plugins across all roles in the collection instead of duplicating them in each role's `library/` directory.
+Inside a collection, you can share custom plugins across all roles in the collection instead of duplicating them in each role’s `library/` directory.
 Collections give your roles a namespace, which removes the potential for naming collisions when developing new roles.
 
 Example::
@@ -227,7 +227,7 @@ If it is desirable to use roles that require facts, but fact gathering is expens
 ====
 Explanations:: You normally use `vars/main.yml` (automatically included) to set variables used by your role.
 If some variables need to be parameterized according to distribution and version (name of packages, configuration file paths, names of services), use this in the beginning of your `tasks/main.yml`:
-Examples::
+Examples:: 
 
 [source,yaml]
 ----
@@ -417,7 +417,7 @@ Rationale:: your role may be included by another role, and if you specify a rela
 For example, if you have something like `include_vars: "{{ ansible_facts['distribution'] }}.yml"` and you do not provide every possible `vars/{{ ansible_facts['distribution'] }}.yml` in your role, Ansible will look in the including role for this file.
 Instead, to ensure that only your role will be referenced, use `include_vars: "{{role_path}}/vars/{{ ansible_facts['distribution'] }}.yml"`.
 Same with other file based includes such as `include_tasks`.
-See https://docs.ansible.com/ansible/latest/dev_guide/overview_architecture.html#the-ansible-search-path[Ansible Developer Guide >> Ansible architecture >> The Ansible Search Path] for more information.
+See https://docs.ansible.com/ansible/latest/dev_guide/overview_architecture.html#the-ansible-search-path[Ansible Developer Guide » Ansible architecture » The Ansible Search Path] for more information.
 ====
 
 === Vars vs Defaults

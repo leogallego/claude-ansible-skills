@@ -92,24 +92,24 @@ inventory_example/  <1>
 ├── dynamic_inventory_script.py  <3>
 ├── groups_and_hosts  <4>
 ├── group_vars/  <5>
-│   ├── alephs/
-│   │   └── capital_letter.yml
-│   ├── all/
-│   │   └── ansible.yml
-│   ├── alphas/
-│   │   ├── capital_letter.yml
-│   │   └── small_caps_letter.yml
-│   ├── betas/
-│   │   └── capital_letter.yml
-│   ├── greek_letters/
-│   │   └── small_caps_letter.yml
-│   └── hebrew_letters/
-│       └── small_caps_letter.yml
+│   ├── alephs/
+│   │   └── capital_letter.yml
+│   ├── all/
+│   │   └── ansible.yml
+│   ├── alphas/
+│   │   ├── capital_letter.yml
+│   │   └── small_caps_letter.yml
+│   ├── betas/
+│   │   └── capital_letter.yml
+│   ├── greek_letters/
+│   │   └── small_caps_letter.yml
+│   └── hebrew_letters/
+│       └── small_caps_letter.yml
 └── host_vars/  <6>
     ├── host1.example.com/
-    │   └── ansible.yml
+    │   └── ansible.yml
     ├── host2.example.com/
-    │   └── ansible.yml
+    │   └── ansible.yml
     └── host3.example.com/
         ├── ansible.yml
         └── capital_letter.yml
@@ -222,9 +222,9 @@ It is now the hosts and their groups which carry the relevant information, it is
 +
 .The "good" variable structure
 ----
-$ cat inventory_good/host_vars/host1/provision.yml
+$ cat inventory_good/host_vars/host1/provision.yml 
 provision_value: uno
-$ cat inventory_good/group_vars/managed_hosts_a/provision.yml
+$ cat inventory_good/group_vars/managed_hosts_a/provision.yml 
 manager_hostname: manager_a
 ----
 +
@@ -241,16 +241,16 @@ The result isn't overwhelming in this simple setup but you would of course bette
 .Comparison of the execution times between the "good" and the "bad" implementation
 ----
 $ ANSIBLE_STDOUT_CALLBACK=profile_tasks \
-	ansible-playbook -i inventory_bad playbook_bad.yml
-Saturday 23 October 2021  13:11:45 +0200 (0:00:00.040)       0:00:00.040 ******
-Saturday 23 October 2021  13:11:45 +0200 (0:00:00.858)       0:00:00.899 ******
-===============================================================================
+	ansible-playbook -i inventory_bad playbook_bad.yml 
+Saturday 23 October 2021  13:11:45 +0200 (0:00:00.040)       0:00:00.040 ****** 
+Saturday 23 October 2021  13:11:45 +0200 (0:00:00.858)       0:00:00.899 ****** 
+=============================================================================== 
 create some file to simulate an API call to provision a host ------------ 0.86s
 $ ANSIBLE_STDOUT_CALLBACK=profile_tasks \
-	ansible-playbook -i inventory_good playbook_good.yml
-Saturday 23 October 2021  13:11:55 +0200 (0:00:00.040)       0:00:00.040 ******
-Saturday 23 October 2021  13:11:56 +0200 (0:00:00.569)       0:00:00.610 ******
-===============================================================================
+	ansible-playbook -i inventory_good playbook_good.yml 
+Saturday 23 October 2021  13:11:55 +0200 (0:00:00.040)       0:00:00.040 ****** 
+Saturday 23 October 2021  13:11:56 +0200 (0:00:00.569)       0:00:00.610 ****** 
+=============================================================================== 
 create some file to simulate an API call to provision a host ------------ 0.57s
 ----
 +
@@ -305,7 +305,7 @@ Use extra vars only for troubleshooting, debugging or validation purposes.
 
 Rationale::
 Inventory variables are typically in some kind of persistent tracked storage (be it a database or Git), and should be your sole source representing your desired state so that you can refer to it non-ambiguously.
-On the other hand, extra vars are bound to a specific job or ansible-call and disappear together with history.
+On the other hand, extra vars are bound to a specific job or ansible-call and disappear together with history. 
 
 Examples::
 Don't use extra vars for the RAM size of VM to create, because this is part of the desired state of your environment, and nobody would know one year down the line if the VM was really created with the proper RAM size according to the state of the inventory.

@@ -22,7 +22,7 @@ Simple is better than complex.
 Readability counts.
 Helping users get things done matters most.
 User experience beats ideological purity.
-"Magic" conquers the manual.
+“Magic” conquers the manual.
 When giving users options, always use convention over configuration.
 Declarative is always better than imperative - most of the time.
 Focus avoids complexity.

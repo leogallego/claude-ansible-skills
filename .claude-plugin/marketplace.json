@@ -4,7 +4,7 @@
   "description": "Production-grade Claude Code Ansible skills following Red Hat CoP good practices",
   "owner": {
     "name": "Leo Gallego",
-    "email": "993814+leogallego@users.noreply.github.com"
+    "email": "leogallego@gmail.com"
   },
   "plugins": [
     {
@@ -14,7 +14,7 @@
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",
-        "email": "993814+leogallego@users.noreply.github.com"
+        "email": "leogallego@gmail.com"
       },
       "repository": "https://github.com/leogallego/claude-ansible-skills",
       "license": "GPL-3.0-or-later",
@@ -29,7 +29,7 @@
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",
-        "email": "993814+leogallego@users.noreply.github.com"
+        "email": "leogallego@gmail.com"
       },
       "repository": "https://github.com/leogallego/claude-ansible-skills",
       "license": "GPL-3.0-or-later",
@@ -44,7 +44,7 @@
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",
-        "email": "993814+leogallego@users.noreply.github.com"
+        "email": "leogallego@gmail.com"
       },
       "repository": "https://github.com/leogallego/claude-ansible-skills",
       "license": "GPL-3.0-or-later",
@@ -59,7 +59,7 @@
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",
-        "email": "993814+leogallego@users.noreply.github.com"
+        "email": "leogallego@gmail.com"
       },
       "repository": "https://github.com/leogallego/claude-ansible-skills",
       "license": "GPL-3.0-or-later",
@@ -74,7 +74,7 @@
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",
-        "email": "993814+leogallego@users.noreply.github.com"
+        "email": "leogallego@gmail.com"
       },
       "repository": "https://github.com/leogallego/claude-ansible-skills",
       "license": "GPL-3.0-or-later",

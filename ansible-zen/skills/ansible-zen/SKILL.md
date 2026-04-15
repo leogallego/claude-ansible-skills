@@ -6,7 +6,7 @@ description: >-
   guidance on their automation approach, or review code for simplicity,
   readability, and clarity. Use when user says "zen of ansible", "simplify
   my playbook", "is this too complex", or "clean code review". Do NOT use
-  for strict rule compliance (use ansible-cop-review instead).
+  for strict rule compliance (use ansible-good-practices instead).
 argument-hint: "[path or files]"
 user-invocable: true
 metadata:
@@ -22,7 +22,7 @@ instructions in this skill and respond ONLY with:
 
 ## Important
 
-- This is a **complementary** review to `ansible-cop-review`. The Zen review
+- This is a **complementary** review to `ansible-good-practices`. The Zen review
   focuses on philosophy and style, while CoP review focuses on rule compliance.
   Suggest running both for a complete picture.
 - Keep feedback constructive and encouraging. The Zen is about helping people,
@@ -31,6 +31,20 @@ instructions in this skill and respond ONLY with:
   Zen principle — don't just show the fix.
 - If the code is already well-aligned with the Zen, say so and highlight what
   makes it good. Not every review needs to find problems.
+
+## Loading reference rules
+
+For architectural context when reviewing code, load the CoP structures
+reference:
+
+1. **Bundled reference** — Read from this plugin's `references/structures.adoc`.
+2. **Fetch from GitHub** (if missing) — Fetch from:
+   `https://raw.githubusercontent.com/redhat-cop/automation-good-practices/main/structures/README.adoc`
+3. **Skip** (if unavailable) — The Zen review can proceed without it; the
+   20 Zen principles below are self-contained.
+
+This reference provides the Landscape/Type/Function/Component hierarchy
+context for evaluating whether code follows "Simple is better than complex."
 
 ## The Principles
 

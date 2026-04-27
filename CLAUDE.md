@@ -25,11 +25,11 @@ The root `.claude-plugin/marketplace.json` indexes all plugins for marketplace d
 
 ### Skills
 
-- **ansible-cop-review** — Reviews Ansible code against all Red Hat CoP rules. Supports severity classification (ERROR/WARNING/INFO), diff-aware reviews, category filtering, ansible-lint integration, parallel review with subagents, and auto-fix.
+- **ansible-good-practices** — Reviews Ansible code against Red Hat CoP rules loaded from per-section AsciiDoc references. Supports section-selective loading, severity classification (ERROR/WARNING/INFO), diff-aware reviews, category filtering, ansible-lint integration, parallel review with subagents, and auto-fix.
 - **ansible-scaffold-role** — Scaffolds a new Ansible role with an interactive variable builder that generates realistic content based on what the role manages (packages, services, configs, etc.). Supports task componentization, smart handler generation, and falls back to manual creation when `ansible-creator` is unavailable.
 - **ansible-scaffold-collection** — Scaffolds a new Ansible content collection with plugin scaffolding (modules, filters, lookup, action), CI/CD pipeline generation, `antsibull-changelog` setup, and collection-level CLAUDE.md. Delegates role creation to the full ansible-scaffold-role process.
 - **ansible-scaffold-ee** — Scaffolds a new Ansible execution environment with dependency introspection from existing project files, external dependency files (`requirements.yml`, `requirements.txt`, `bindep.txt`), and CI/CD pipeline generation.
-- **ansible-zen** — Displays the Zen of Ansible principles and reviews Ansible code against them for simplicity, readability, and clarity. Provides a Zen Score (1-10) and actionable recommendations. Complements ansible-cop-review with philosophical guidance.
+- **ansible-zen** — Displays the Zen of Ansible principles and reviews Ansible code against them for simplicity, readability, and clarity. Provides a Zen Score (1-10) and actionable recommendations. Complements ansible-good-practices with philosophical guidance.
 
 ## Skill File Format
 
@@ -47,7 +47,7 @@ The body is a markdown prompt that Claude Code follows when the skill is invoked
 
 ## Key Dependencies
 
-The scaffold skills depend on the `ansible-creator` CLI tool for generating base skeletons (with manual fallback if not installed). The review skill can optionally use `ansible-lint` for cross-referencing. All skills depend on the Ansible CoP rules defined in the user's global `CLAUDE.md` and `redhat-cop-automation-good-practices-*.md`, with a fallback to https://github.com/redhat-cop/automation-good-practices when rules are not available locally.
+The scaffold skills depend on the `ansible-creator` CLI tool for generating base skeletons (with manual fallback if not installed). The review skill can optionally use `ansible-lint` for cross-referencing. All skills load CoP rules from bundled `references/*.adoc` files (per-section AsciiDoc from [redhat-cop/automation-good-practices](https://github.com/redhat-cop/automation-good-practices)), with GitHub fetch as fallback and CLAUDE.md as last resort.
 
 ## Marketplace Plugin
 

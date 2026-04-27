@@ -6,7 +6,7 @@ description: >-
   new Ansible collection. Use when user says "create a collection", "new
   collection", "scaffold collection", or "init collection". Leverages
   ansible-creator when available. Do NOT use for reviewing existing
-  collections (use ansible-cop-review instead).
+  collections (use ansible-good-practices instead).
 argument-hint: "[namespace.name]"
 disable-model-invocation: true
 user-invocable: true
@@ -223,8 +223,17 @@ Report what was created:
 - Any manual steps the user should take next (e.g., adding Galaxy API key
   secret, authenticating to Automation Hub, writing integration tests)
 
-## Rules fallback
+## Loading reference rules
 
-If the rules are not available locally (no CLAUDE.md with Ansible rules or
-`redhat-cop-automation-good-practices-*.md`), fetch them from
-https://github.com/redhat-cop/automation-good-practices as a fallback.
+Load CoP reference rules using this priority:
+
+1. **Bundled references** — Read from this plugin's `references/*.adoc` files
+   (`collections.adoc`, `roles.adoc`, `coding_style.adoc`).
+2. **Fetch from GitHub** (if bundled files are missing) — Fetch from:
+   `https://raw.githubusercontent.com/redhat-cop/automation-good-practices/main/{section}/README.adoc`
+3. **CLAUDE.md only** (if GitHub is unreachable) — Use only the Ansible rules
+   from CLAUDE.md. Warn: "Scaffolding may miss some best practices."
+4. **Stop** (if no rules at all) — Report inability to scaffold and stop.
+
+CLAUDE.md rules take precedence when present. AsciiDoc provides full context
+and examples.

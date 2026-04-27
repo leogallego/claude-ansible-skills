@@ -5,7 +5,7 @@ description: >-
   Use when the user wants to create, generate, or bootstrap a new Ansible
   role. Use when user says "create a role", "new role", "scaffold role",
   or "generate role skeleton". Leverages ansible-creator when available.
-  Do NOT use for reviewing existing roles (use ansible-cop-review instead).
+  Do NOT use for reviewing existing roles (use ansible-good-practices instead).
 argument-hint: "[role-name]"
 disable-model-invocation: true
 user-invocable: true
@@ -169,8 +169,17 @@ After creating all files, verify:
 - YAML uses 2-space indent and `true`/`false` booleans
 - `ansible_facts['...']` bracket notation is used everywhere
 
-## Rules fallback
+## Loading reference rules
 
-If the rules are not available locally (no CLAUDE.md with Ansible rules or
-`redhat-cop-automation-good-practices-*.md`), fetch them from
-https://github.com/redhat-cop/automation-good-practices as a fallback.
+Load CoP reference rules using this priority:
+
+1. **Bundled references** — Read from this plugin's `references/*.adoc` files
+   (`roles.adoc`, `coding_style.adoc`).
+2. **Fetch from GitHub** (if bundled files are missing) — Fetch from:
+   `https://raw.githubusercontent.com/redhat-cop/automation-good-practices/main/{section}/README.adoc`
+3. **CLAUDE.md only** (if GitHub is unreachable) — Use only the Ansible rules
+   from CLAUDE.md. Warn: "Scaffolding may miss some best practices."
+4. **Stop** (if no rules at all) — Report inability to scaffold and stop.
+
+CLAUDE.md rules take precedence when present. AsciiDoc provides full context
+and examples.

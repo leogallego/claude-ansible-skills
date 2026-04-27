@@ -1,0 +1,316 @@
+= Inventories and Variables Good Practices for Ansible
+
+== Identify your Single Source(s) of Truth and use it/them in your inventory
+[%collapsible]
+====
+Explanations::
+A Single Source of Truth (SSOT) is the place where the "ultimate" truth about a certain data is generated, stored and maintained.
+There can be more than one SSOT, each for a different piece of information, but they shouldn't overlap and even less conflict.
+As you create your inventory, you identify these SSOTs and combine them into one inventory using dynamic inventory sources (we'll see how later on).
+Only the aspects which are not already provided by other sources are kept statically in your inventory.
+Doing this, your inventory becomes another source of truth, but only for the data it holds statically, because there is no other place to keep it.
+
+Rationale::
+You limit your effort to maintain your inventory to its absolute minimum and you avoid generating potentially conflicting information with the rest of your IT.
+
+Examples::
+You can typically identify three kinds of candidates as SSOTs:
++
+* technical ones, where your managed devices live anyway, like a cloud or virtual manager (OpenStack, RHV, Public Cloud API, ...) or management systems (Satellite, monitoring systems, ...). Those sources provide you with technical information like IP addresses, OS type, etc.
+* managed ones, like a Configuration Management Database (CMDB), where your IT anyway manages a lot of information of use in an inventory. A CMDB provides you with more organizational information, like owner or location, but also with "to-be" technical information.
+* the inventory itself, only for the data which doesn't exist anywhere else.
++
+Ansible provides a lot of https://docs.ansible.com/ansible/latest/plugins/inventory.html[inventory plugins] to pull data from those sources and they can be combined into one big inventory.
+This gives you a complete model of the environment to be automated, with limited effort to maintain it, and no confusion about where to modify it to get the result you need.
+====
+
+
+[[differentiate]]
+== Differentiate clearly between "As-Is" and "To-Be" information
+[%collapsible]
+====
+Explanations::
+As you combine multiple sources, some will represent:
++
+* discovered information grabbed from the existing environment, this is the "As-Is" information.
+* managed information entered in a tool, expressing the state to be reached, hence the "To-Be" information.
++
+In general, the focus of an inventory is on the managed information because it represents the desired state you want to reach with your automation. This said, some discovered information is required for the automation to work.
+
+Rationale::
+Mixing up these two kind of information can lead to your automation taking the wrong course of action by thinking that the current situation is aligned with the desired state.
+That can make your automation go awry and your automation engineers confused.
+There is a reason why Ansible makes the difference between "facts" (As-Is) and "variables" (To-Be), and so should you.
+In the end, automation is making sure that the As-Is situation complies to the To-Be description.
++
+NOTE: many CMDBs have failed because they don't respect this principle.
+This and the lack of automation leads to a mix of unmaintained As-Is and To-Be information with no clear guideline on how to keep them up-to-date, and no real motivation to do so.
+
+Examples::
+The technical tools typically contain a lot of discovered information, like an IP address or the RAM size of a VM.
+In a typical cloud environment, the IP address isn't part of the desired state, it is assigned on the fly by the cloud management layer, so you can only get it dynamically from the cloud API and you won't manage it.
+In a more traditional environment nevertheless, the IP address will be static, managed more or less manually, so it will become part of your desired state.
+In this case, you shouldn't use the discovered information or you might not realize that there is a discrepancy between As-Is and To-Be.
++
+The RAM size of a VM will be always present in two flavours, e.g. As-Is coming from the technical source and To-Be coming from the CMDB, or your static inventory, and you shouldn't confuse them.
+By lack of doing so, your automation might not correct the size of the VM where it should have aligned the As-Is with the To-Be.
+====
+
+
+== Define your inventory as structured directory instead of single file
+[%collapsible]
+====
+Explanations::
+Everybody has started with a single file inventory in ini-format (the courageous ones among us in YAML format), combining list of hosts, groups and variables.
+An inventory can nevertheless be also a directory containing:
++
+* list(s) of hosts
+* list(s) of groups, with sub-groups and hosts belonging to those groups
+* dynamic inventory plug-ins configuration files
+* dynamic inventory scripts (deprecated but still simple to use)
+* structured `host_vars` directories
+* structured `group_vars` directories
++
+The recommendation is to start with such a structure and extend it step by step.
+
+Rationale::
+It is the only way to combine simply multiple sources into one inventory, without the trouble to call ansible with multiple `-i {inventory_file}` parameters, and keep the door open for extending it with dynamic elements.
++
+It is also simpler to maintain in a Git repository with multiple maintainers as the chance to get a conflict is reduced because the information is spread among multiple files.
+You can drop roles' `defaults/main.yml` file into the structure and adapt it to your needs very quickly.
++
+And finally it gives you a better overview of what is in your inventory without having to dig deeply into it, because already the structure (as revealed with `tree` or `find`) gives you a first idea of where to search what. This makes on-boarding of new maintainers a lot easier.
+
+Examples::
+The following is a complete inventory as described before.
+You don't absolutely need to start at this level of complexity, but the experience shows that once you get used to it, it is actually a lot easier to understand and maintain than a single file.
++
+.Tree of a structured inventory directory
+----
+inventory_example/  <1>
+├── dynamic_inventory_plugin.yml  <2>
+├── dynamic_inventory_script.py  <3>
+├── groups_and_hosts  <4>
+├── group_vars/  <5>
+│   ├── alephs/
+│   │   └── capital_letter.yml
+│   ├── all/
+│   │   └── ansible.yml
+│   ├── alphas/
+│   │   ├── capital_letter.yml
+│   │   └── small_caps_letter.yml
+│   ├── betas/
+│   │   └── capital_letter.yml
+│   ├── greek_letters/
+│   │   └── small_caps_letter.yml
+│   └── hebrew_letters/
+│       └── small_caps_letter.yml
+└── host_vars/  <6>
+    ├── host1.example.com/
+    │   └── ansible.yml
+    ├── host2.example.com/
+    │   └── ansible.yml
+    └── host3.example.com/
+        ├── ansible.yml
+        └── capital_letter.yml
+----
+<1> this is your inventory directory
+<2> a configuration file for a dynamic inventory plug-in
+<3> a dynamic inventory script, old style and deprecated but still used (and supported)
+<4> a file containing a static list of hosts and groups, the name isn't important (often called `hosts` but some might confuse it with `/etc/hosts` and it also contains groups).
+See below for an example.
+<5> the `group_vars` directory to define group variables.
+Notice how each group is represented by a directory of its name containing one or more variable files.
+<6> the `host_vars` directory to define host variables.
+Notice how each host is represented by a directory of its name containing one or more variable files.
++
+The groups and hosts file could look as follows, important is to not put any variable definition in this file.
++
+.Content of the `groups_and_hosts` file
+[source,ini]
+----
+include::inventory_example/groups_and_hosts[]
+----
++
+Listing the hosts under `[all]` isn't really required but makes sure that no host is forgotten, should it not belong to any other group.
+The ini-format isn't either an obligation but it seems easier to read than YAML, as long as no variable is involved, and makes it easier to maintain in an automated manner using `lineinfile` (without needing to care for the indentation).
++
+Regarding the group and host variables, the name of the variable files is actually irrelevant, you can verify it by calling `ansible-inventory -i inventory_example --list`:
+you will see nowhere the name `capital_letter` or `small_caps_letter` (you might see `ansible` though, but for other reasons...).
+We nevertheless follow the convention to name our variable files after the role they are steering (so we assume the roles `capital_letter` and `small_caps_letter`).
+If correctly written, the `defaults/main.yml` file from those roles can be simply "dropped" into our inventory structure and adapted accordingly to our needs.
+We reserve the name `ansible.yml` for the Ansible related variables (user, connection, become, etc).
++
+TIP: you can even create a sub-directory in a host's or group's variable directory and put _there_ the variable files.
+This is useful if you have many variables related to the same topic you want to group together but maintain in separate files.
+For example Satellite requires many variables to be fully configured, so you can have a structure as follows (again, the name of the sub-directory `satellite` and of the files doesn't matter):
++
+.Example of a complex tree of variables with sub-directory
+----
+inventory_satellite/
+├── groups_and_hosts
+└── host_vars/
+    └── sat6.example.com/
+        ├── ansible.yml
+        └── satellite/
+            ├── content_views.yml
+            ├── hostgroups.yml
+            └── locations.yml
+----
+====
+
+== Rely on your inventory to loop over hosts, don't create lists of hosts
+[%collapsible]
+====
+Explanations::
+To perform the same task on multiple hosts, don't create a variable with a list of hosts and loop over it.
+Instead use as much as possible the capabilities of your inventory, which is already a kind of list of hosts.
++
+The anti-pattern is especially obvious in the example of provisioning hosts on some kind of manager.
+Commonly seen automation tasks of this kind are spinning up a list of VMs via a hypervisor manager like oVirt/RHV or vCenter, or calling a management tool like Foreman/Satellite or even our beloved AWX/Tower/controller.
+
+Rationale::
+There are 4 main reasons for following this advice:
++
+. a list of hosts is more difficult to maintain than an inventory structure, and tends to become very quickly difficult to oversee.
+This is especially true as you generally need to maintain your hosts also in your inventory.
+This brings us to the 2nd advantage:
+. you avoid duplicating information, as you often need the same kind of information in your inventory that you also need in order to provision your VMs.
+In your inventory, you can also use groups to define group variables, automatically inherited by hosts.
+You can try to implement a similar inheritance pattern with your list of hosts, but it quickly becomes difficult and _hand-crafted_.
+. as you loop through the hosts of an inventory, Ansible helps you with https://docs.ansible.com/ansible/latest/user_guide/playbooks_strategies.html[parallelization, throttling, etc], all of which you can't do easily with your own list (technically, you _can_ combine https://docs.ansible.com/ansible/latest/user_guide/playbooks_async.html[async and loop] to reach something like this, but it's a lot more complex to handle than letting Ansible do the heavy lifting for you).
+. you can very simply _limit_ the play to certain hosts, using for example the `--limit` parameter of `ansible-playbook` (or the 'limit' field in Tower/controller), even using groups and patterns.
+You can't really do this with your own list of hosts.
+
+Examples::
+Our first idea could be to define managers and hosts first in an inventory:
++
+.Content of the "bad" `groups_and_hosts` file
+[source,ini]
+----
+include::inventory_loop_hosts/inventory_bad/groups_and_hosts[]
+----
++
+Each manager has a list of hosts, which can look like this:
++
+.List of hosts in `inventory_bad/host_vars/manager_a/provision.yml`
+[source,yaml]
+----
+include::inventory_loop_hosts/inventory_bad/host_vars/manager_a/provision.yml[]
+----
++
+So that we can loop over the list in this way:
++
+.The "bad" way to loop over hosts
+[source,yaml]
+----
+include::inventory_loop_hosts/playbook_bad.yml[]
+----
++
+TIP: check the resulting files using e.g. `head -n-0 /tmp/bad_*`.
++
+As said, no way to limit the hosts provisioned, and no parallelism.
+Compare then with the recommended approach, with a slightly different structure:
++
+.Content of the "good" `groups_and_hosts` file
+[source,ini]
+----
+include::inventory_loop_hosts/inventory_good/groups_and_hosts[]
+----
++
+It is now the hosts and their groups which carry the relevant information, it is not anymore parked in one single list (and can be used for other purposes):
++
+.The "good" variable structure
+----
+$ cat inventory_good/host_vars/host1/provision.yml 
+provision_value: uno
+$ cat inventory_good/group_vars/managed_hosts_a/provision.yml 
+manager_hostname: manager_a
+----
++
+And the provisioning playbook now runs in parallel and can be limited to specific hosts:
++
+.The "good" way to loop over hosts
+[source,yaml]
+----
+include::inventory_loop_hosts/playbook_good.yml[]
+----
++
+The result isn't overwhelming in this simple setup but you would of course better appreciate if the provisioning would take half an hour instead of a fraction of seconds:
++
+.Comparison of the execution times between the "good" and the "bad" implementation
+----
+$ ANSIBLE_STDOUT_CALLBACK=profile_tasks \
+	ansible-playbook -i inventory_bad playbook_bad.yml 
+Saturday 23 October 2021  13:11:45 +0200 (0:00:00.040)       0:00:00.040 ****** 
+Saturday 23 October 2021  13:11:45 +0200 (0:00:00.858)       0:00:00.899 ****** 
+=============================================================================== 
+create some file to simulate an API call to provision a host ------------ 0.86s
+$ ANSIBLE_STDOUT_CALLBACK=profile_tasks \
+	ansible-playbook -i inventory_good playbook_good.yml 
+Saturday 23 October 2021  13:11:55 +0200 (0:00:00.040)       0:00:00.040 ****** 
+Saturday 23 October 2021  13:11:56 +0200 (0:00:00.569)       0:00:00.610 ****** 
+=============================================================================== 
+create some file to simulate an API call to provision a host ------------ 0.57s
+----
++
+TIP: if for some reason, you can't follow the recommendation, you can at least avoid duplicating too much information by indirectly referencing the hosts' variables as in `"{{ hostvars[item.name]['provision_value'] }}"`. Not so bad...
+====
+
+== Restrict your usage of variable types
+[%collapsible]
+====
+Explanations::
+* Avoid playbook and play variables, as well as `include_vars`.
+  Opt for inventory variables instead.
+* Avoid using scoped variables unless required for runtime reasons, e.g. for loops and for temporary variables based on runtime variables.
+  Another valid exception is when nested variables are too complicated to be defined at once.
+
+Rationale::
+There are https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#understanding-variable-precedence[22 levels of variable precedence].
+This is almost impossible to keep in mind for a "normal" human and can lead to all kind of weird behaviors if not under control.
+In addition, the use of play(book) variables is not recommended as it blurs the separation between code and data.
+The same applies to all constructs including specific variable files as part of the play (i.e. `include_vars`).
+By reducing the number of variable types, you end up with a more simple and overseeable list of variables.
+Together with some explanations why they have their specific precedence, so that they become easier to remember and use wisely:
++
+. role defaults (defined in `defaults/main.yml`), they are... defaults and can be overwritten by anything.
+. inventory vars, they truly represent your desired state.
+  They have their own internal precedence (group before host) but that's easy to remember.
+. host facts don't represent a desired state but the current state, and no other variable should have the same name because of <<differentiate>> so that the precedence doesn't really matter.
+. role vars (defined in `vars/main.yml`) represent constants used by the role to separate code from data, and shouldn't either collide with the inventory variables, but can be overwritten by extra vars if you know what you're doing.
+. scoped vars, at the block or task level, are local to their scope and hence internal to the role, and can't collide with other variable types.
+. runtime vars, defined by register or set_facts, are taking precedence over almost everything defined previously, which makes sense as they represent the current state of the automation.
+. scoped params, at the role or include level this time, are admittedly a bit out of order and should be avoided to limit surprises.
+. and lastly, extra_vars overwrite everything else (even runtime vars, which can be quite surprising)
+
+NOTE: we didn't explicitly consider https://docs.ansible.com/automation-controller/4.4/html/userguide/workflow_templates.html#ug-wf-templates-extravars[Workflow and Job Template variables] but they are all extra vars in this consideration.
+
+The following picture summarizes this list in a simplified and easier to keep in mind way, highlighting which variables are meant to overwrite others:
+
+.Flow of variable precedences
+image::variable_precedences.svg[flow of variable precedences in 3 lanes]
+
+CAUTION: even if we write that variables _shouldn't_ overwrite each other, they still all share the same namespace and _can_ potentially overwrite each other.
+It is your responsibility as automation author to make sure they don't.
+====
+
+== Prefer inventory variables over extra vars to describe the desired state
+[%collapsible]
+====
+Explanations::
+Don't use extra vars to define your desired state.
+Make sure your inventory completely describes how your environment is supposed to look like.
+Use extra vars only for troubleshooting, debugging or validation purposes.
+
+Rationale::
+Inventory variables are typically in some kind of persistent tracked storage (be it a database or Git), and should be your sole source representing your desired state so that you can refer to it non-ambiguously.
+On the other hand, extra vars are bound to a specific job or ansible-call and disappear together with history. 
+
+Examples::
+Don't use extra vars for the RAM size of VM to create, because this is part of the desired state of your environment, and nobody would know one year down the line if the VM was really created with the proper RAM size according to the state of the inventory.
+You may use an extra variable to protect a critical part of a destructive playbook, something like `are_you_really_really_sure: true/false`, which is validated before e.g. a VM is destroyed and recreated to change parameters which can't be changed on the fly.
+You can also use extra vars to enforce fact values which can't be reproduced easily, like overwriting `ansible_memtotal_mb` to simulate a RAM size fact of terabytes to validate that your code can cope with it.
++
+Another example could be the usage of `no_log: "{{ no_log_in_case_of_trouble | default(true) }}` to exceptionally "uncover" the output of failing tasks even though they are security relevant.
+====

@@ -4,17 +4,17 @@
   "description": "Production-grade Claude Code Ansible skills following Red Hat CoP good practices",
   "owner": {
     "name": "Leo Gallego",
-    "email": "993814+leogallego@users.noreply.github.com"
+    "email": "leogallego@gmail.com"
   },
   "plugins": [
     {
-      "name": "ansible-cop-review",
-      "source": "./ansible-cop-review",
+      "name": "ansible-good-practices",
+      "source": "./ansible-good-practices",
       "description": "Review Ansible code against Red Hat CoP automation good practices. Use when the user wants to audit, lint, review, check, or validate Ansible roles, playbooks, collections, or inventory for compliance with CoP rules. Use when user says \"lint my role\", \"check my playbook\", \"review best practices\", or \"audit my Ansible code\". Do NOT use for general Python or YAML linting unrelated to Ansible.",
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",
-        "email": "993814+leogallego@users.noreply.github.com"
+        "email": "leogallego@gmail.com"
       },
       "repository": "https://github.com/leogallego/claude-ansible-skills",
       "license": "GPL-3.0-or-later",
@@ -25,11 +25,11 @@
     {
       "name": "ansible-scaffold-collection",
       "source": "./ansible-scaffold-collection",
-      "description": "Scaffold a new Ansible content collection following all Red Hat CoP good practices. Use when the user wants to create, generate, or bootstrap a new Ansible collection. Use when user says \"create a collection\", \"new collection\", \"scaffold collection\", or \"init collection\". Leverages ansible-creator when available. Do NOT use for reviewing existing collections (use ansible-cop-review instead).",
+      "description": "Scaffold a new Ansible content collection following all Red Hat CoP good practices. Use when the user wants to create, generate, or bootstrap a new Ansible collection. Use when user says \"create a collection\", \"new collection\", \"scaffold collection\", or \"init collection\". Leverages ansible-creator when available. Do NOT use for reviewing existing collections (use ansible-good-practices instead).",
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",
-        "email": "993814+leogallego@users.noreply.github.com"
+        "email": "leogallego@gmail.com"
       },
       "repository": "https://github.com/leogallego/claude-ansible-skills",
       "license": "GPL-3.0-or-later",
@@ -44,7 +44,7 @@
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",
-        "email": "993814+leogallego@users.noreply.github.com"
+        "email": "leogallego@gmail.com"
       },
       "repository": "https://github.com/leogallego/claude-ansible-skills",
       "license": "GPL-3.0-or-later",
@@ -55,11 +55,26 @@
     {
       "name": "ansible-scaffold-role",
       "source": "./ansible-scaffold-role",
-      "description": "Scaffold a new Ansible role following all Red Hat CoP good practices. Use when the user wants to create, generate, or bootstrap a new Ansible role. Use when user says \"create a role\", \"new role\", \"scaffold role\", or \"generate role skeleton\". Leverages ansible-creator when available. Do NOT use for reviewing existing roles (use ansible-cop-review instead).",
+      "description": "Scaffold a new Ansible role following all Red Hat CoP good practices. Use when the user wants to create, generate, or bootstrap a new Ansible role. Use when user says \"create a role\", \"new role\", \"scaffold role\", or \"generate role skeleton\". Leverages ansible-creator when available. Do NOT use for reviewing existing roles (use ansible-good-practices instead).",
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",
-        "email": "993814+leogallego@users.noreply.github.com"
+        "email": "leogallego@gmail.com"
+      },
+      "repository": "https://github.com/leogallego/claude-ansible-skills",
+      "license": "GPL-3.0-or-later",
+      "tags": [
+        "ansible"
+      ]
+    },
+    {
+      "name": "ansible-cop-review",
+      "source": "./ansible-cop-review",
+      "description": "[DEPRECATED: use ansible-good-practices instead] Review Ansible code against Red Hat CoP automation good practices. Use when the user wants to audit, lint, review, check, or validate Ansible roles, playbooks, collections, or inventory for compliance with CoP rules.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Leo Gallego",
+        "email": "leogallego@gmail.com"
       },
       "repository": "https://github.com/leogallego/claude-ansible-skills",
       "license": "GPL-3.0-or-later",
@@ -70,11 +85,11 @@
     {
       "name": "ansible-zen",
       "source": "./ansible-zen",
-      "description": "Display the Zen of Ansible principles and review Ansible code against them. Use when the user wants to see the Zen of Ansible, get philosophical guidance on their automation approach, or review code for simplicity, readability, and clarity. Use when user says \"zen of ansible\", \"simplify my playbook\", \"is this too complex\", or \"clean code review\". Do NOT use for strict rule compliance (use ansible-cop-review instead).",
+      "description": "Display the Zen of Ansible principles and review Ansible code against them. Use when the user wants to see the Zen of Ansible, get philosophical guidance on their automation approach, or review code for simplicity, readability, and clarity. Use when user says \"zen of ansible\", \"simplify my playbook\", \"is this too complex\", or \"clean code review\". Do NOT use for strict rule compliance (use ansible-good-practices instead).",
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",
-        "email": "993814+leogallego@users.noreply.github.com"
+        "email": "leogallego@gmail.com"
       },
       "repository": "https://github.com/leogallego/claude-ansible-skills",
       "license": "GPL-3.0-or-later",

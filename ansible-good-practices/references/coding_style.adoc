@@ -1,0 +1,491 @@
+= Coding Style Good Practices for Ansible
+
+It has proven useful to agree on certain guiding principles as early as possible in any automation project.
+Doing so makes it much easier to onboard new Ansible developers.
+Project guidelines can also be shared with other departments working on automation which in turn improves the re-usability of playbooks, roles, modules, and documentation.
+
+Another major benefit is that it makes code review process less time-consuming and more reliable; making both the developer and reviewer more likely to engage in a constructive review conversation.
+
+This section contains suggestions for such coding-style guidelines.
+The list is neither complete nor are all of the guidelines necessary in every automation project.
+Experience shows that it makes sense to start with a minimum set of guidelines because the longer the list the lower the chance of people actually reading through it.
+Additional guidelines can always be added later should the situation warrant it.
+
+== Naming things
+
+* Use valid Python identifiers following standard naming conventions of being in `snake_case_naming_schemes` for all YAML or Python files, variables, arguments, repositories, and other such names (like dictionary keys).
+* Do not use special characters other than underscore in variable names, even if YAML/JSON allow them.
++
+[%collapsible]
+====
+Explanation:: Using such variables in Jinja2 or Python would be then very confusing and probably not functional.
+Rationale:: even when Ansible currently allows names that are not valid identifier, it may stop allowing them in the future, as it happened in the past already.
+Making all names valid identifiers will avoid encountering problems in the future. Dictionary keys that are not valid identifiers are also less intuitive to use in Jinja2 (a dot in a dictionary key would be particularly confusing).
+====
+
+* Use mnemonic and descriptive names that are human-readable and do not shorten more than necessary.
+  A pattern `object[_feature]_action` has proven useful as it guarantees a proper sorting in the file system for roles and playbooks.
+  Systems support long identifier names, so use them!
+* Avoid numbering roles and playbooks, you'll never know how they'll be used in the future.
+* Name all tasks, plays, and task blocks to improve readability.
+* Write task names in the imperative (e.g. "Ensure service is running"), this communicates the action of the task.
+* Avoid abbreviations in names, or use capital letter for abbreviations where it cannot be avoided.
+
+== YAML and Jinja2 Syntax
+
+* Indent at two spaces
+* Indent list contents beyond the list definition
++
+[%collapsible]
+====
+.Do this:
+[source,yaml]
+----
+example_list:
+  - example_element_1
+  - example_element_2
+  - example_element_3
+  - example_element_4
+----
+
+.Don't do this:
+[source,yaml]
+----
+example_list:
+- example_element_1
+- example_element_2
+- example_element_3
+- example_element_4
+----
+====
+
+* Split long expressions into multiple lines.
++
+[%collapsible]
+====
+Rationale:: Long lines are difficult to read, and many teams even ask for a line length limit around 120-150 characters.
+ansible-lint defaults to 82 characters per line - see (https://ansible-lint.readthedocs.io/rules/yaml/[Ansible Lint YAML rules]).
+You don't want to have to skip `yaml[line-length]` in your `.ansible-lint`, or litter your code with `# noqa yaml[line-length]`.
+Examples:: there are multiple ways to avoid long lines but the most generic one is to use the YAML folding sign (`>-`):
++
+.Usage of the YAML folding sign
+[source,yaml]
+----
+- name: Call a very long command line
+  ansible.builtin.command: >-
+    echo Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    Maecenas mollis, ante in cursus congue, mauris orci tincidunt nulla,
+    non gravida tortor mi non nunc.
+
+- name: Set a very long variable
+  ansible.builtin.set_fact:
+    meaningless_variable: >-
+      Ut ac neque sit amet turpis ullamcorper auctor.
+      Cras placerat dolor non ipsum posuere malesuada at ac ipsum.
+      Duis a neque fermentum nulla imperdiet blandit.
+----
++
+TIP: Always use the sign `>-` instead of `>` unless you are absolutely sure the trailing newline is not significant.
+The sign `>` adds a newline character to the last line, effectively turning `non nunc.` at the end of the example string above into  `"non nunc.\n"`, and `>-` doesn't add the newline character.
+It is really easy to introduce an error by using `>` and silently add a newline to a variable, like a filename, which leads to strange, hard to decipher errors.
+See section "Wrap longer lines of code" for more information about line wrapping.
+====
+
+* If the `when:` condition results in a line that is too long, and is an `and` expression, then break it into a list of conditions.
++
+[%collapsible]
+====
+Rationale:: Ansible will `and` the list elements together (https://docs.ansible.com/ansible/latest/user_guide/playbooks_conditionals.html#basic-conditionals-with-when[Ansible UseGuide » Conditionals]).
+Multiple conditions that all need to be true (a logical `and`) can also be specified as a list, but beware of bare variables in `when:`.
+Examples::
++
+.Do this
+[source,yaml]
+----
+when:
+  - myvar is defined
+  - myvar | bool
+----
++
+.instead of this
+[source,yaml]
+----
+when: myvar is defined and myvar | bool
+----
+====
+
+* All roles need to, minimally, pass a basic ansible-playbook syntax check run
+* Spell out all task arguments in YAML style and do not use `key=value` type of arguments
++
+[%collapsible]
+====
+.Do this:
+[source,yaml]
+----
+tasks:
+  - name: Print a message
+    ansible.builtin.debug:
+      msg: This is how it's done.
+----
+
+.Don't do this:
+[source,yaml]
+----
+tasks:
+  - name: Print a message
+    ansible.builtin.debug: msg="This is the exact opposite of how it's done."
+----
+====
+
+* Use `true` and `false` for boolean values in playbooks.
++
+[%collapsible]
+====
+Explanation:: Do not use the Ansible-specific `yes` and `no` as boolean values in YAML as these are completely custom extensions used by Ansible and are not part of the YAML spec and also avoid the use of the Python-style `True` and `False` for boolean values in playbooks.
+
+Rationale:: https://yaml.org/type/bool.html[YAML 1.1] allows all variants whereas https://yaml.org/spec/1.2/spec.html#id2803629[YAML 1.2] allows only true/false, and we want to be ready for when it becomes the default, and avoid a massive migration effort.
+====
+
+* Avoid comments in playbooks when possible.
+  Instead, ensure that the task `name` value is descriptive enough to tell what a task does.
+  Variables are commented in the `defaults` and `vars` directories and, therefore, do not need explanation in the playbooks themselves.
+* Use a single space separating the template markers from the variable name inside all Jinja2 template points.
+  For instance, always write it as `{{ variable_name_here }}`.
+  The same goes if the value is an expression. `{{ variable_name | default('hiya, doc') }}`
+* When naming files, use the `.yml` extension and _not_ `.yaml`.
+  `.yml` is what `ansible-galaxy init` does when creating a new role template.
+* Use double quotes for YAML strings with the exception of Jinja2 strings which will use single quotes.
+* Do not use quotes unless you have to, especially for short module-keyword-like strings like `present`, `absent`, etc.
+  But do use quotes for user-side strings such as descriptions, names, and messages.
+* Even if JSON is valid YAML and Ansible understands it, do only use JSON syntax if it makes sense (e.g. a variable file automatically generated) or adds to the readability.
+  In doubt, nobody expects JSON so stick to YAML.
+* Break up lengthy Jinja templates into multiple templates when there are distinct logical sections.
++
+[%collapsible]
+====
+Rationale:: Long and complex Jinja templates can be difficult to maintain and debug. By splitting excessively long templates into logical componets that can be included as-needed, each template will be easier to maintain.
+====
+
+* Jinja templates should not be used to create structured data but instead text and semi-structured data. Filter plugins are preferred over Jinja templates for the use of data manipulation or transformation.
++
+[%collapsible]
+====
+Rationale:: When working with structured data or data transformations it is preferable to use a programming language (such as Python) that has better support and tooling to do this kind of work.
+Custom filter plugins can be written to handle complex or unique use-cases.
+Tasks will be much more legible if data is managed and manipulated via plugins than with in-line Jinja.
+====
+
+== Ansible Guidelines
+
+* Ensure that all tasks are idempotent.
+* https://github.com/ansible/ansible/issues/10374[Ansible variables use lazy evaluation.]
+* Prefer the command module over the shell module unless you explicitly need shell functionality such as, e.g., piping.
+  Even better, use a dedicated module, if it exists.
+  If not, see the <<check-mode-and-idempotency-issues,section>> about idempotency and check mode and make sure that your task is idempotent and supports check mode properly;
+  your task will likely need options such as `changed_when:` and maybe `check_mode:`).
+* Anytime `command` or `shell` modules are used, add a comment in the code with justification to help with future maintenance.
+* Use the `| bool` filter when using bare variables (expressions consisting of just one variable reference without any operator) in `when`.
+* Break complex task files down into discrete parts.
++
+[%collapsible]
+====
+Rationale::
+Task files that are very or and/or contain highly nested blocks are difficult to maintain.
+Breaking a large or complex task file into multiple discrete files makes it easier to read and understand what is being done in each part.
+====
+
+* Use bracket notation instead of dot notation for value retrieval (e.g. `item['key']` vs. `item.key`)
++
+[%collapsible]
+====
+Rationale::
+Dot notation will fail in some cases (such as when a variable name includes a hyphen) and it's better to stay consistent than to switch between the two options within a role or playbook.
+Additionally, some key names collide with attributes and methods of Python dictionaries such as `count`, `copy`, `title`, and others (refer to the https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#referencing-key-value-dictionary-variables[Ansible User Guide] for an extended list)
+
+Example::
+This https://blog.networktocode.com/post/Exploring-Jinja-Variable-Syntax-in-Ansible[post] provides an excellent demonstration of how using dot notation syntax can impact your playbooks.
+====
+
+* Do not use `meta: end_play`.
++
+[%collapsible]
+====
+Rationale:: It aborts the whole play instead of a given host (with multiple hosts in the inventory).
+If absolutely necessary, consider using `meta: end_host`.
+====
+
+* Task names can be made dynamic by using variables wrapped in Jinja2 templates at the end of the string
++
+[%collapsible]
+====
+Rationale:: This can help with reading the logs.
+For example, if the task is managing one of several devices, and you want the task name output to show the device being managed.
+However, the template must come at the *end* of the string - see (https://ansible-lint.readthedocs.io/rules/name/[Ansible Lint name template rule]).
+Note that in some cases, it can make it harder for users to correlate the logs to the code.
+For example, if there is a log message like "Manage the disk device /dev/dsk/0001", and the user tries to do something like `grep "Manage the disk device /dev/dsk/0001" rolename/tasks/*.yml` to figure out which task this comes from, they will not find it.
+If the template comes at the end of the string, the user will know to omit the device name from `grep`.
+A better way to debug is to use `ansible-playbook -vv`, which will show the exact file and line number of the task.
+
+Example::
+.Do this:
+[source,yaml]
+----
+tasks:
+  - name: Manage the disk device {{ storage_device_name }}
+    some.module:
+      device: "{{ storage_device_name }}"
+----
+
+.Don't do this:
+[source,yaml]
+----
+tasks:
+  - name: Manage {{ storage_device_name }}, the disk device
+    some.module:
+      device: "{{ storage_device_name }}"
+----
+====
+
+* Do not use variables (wrapped in Jinja2 templates) for play names; variables don't get expanded properly there.
+  The same applies to loop variables (by default `item`) in task names within a loop.
+  They, too, don't get properly expanded and hence are not to be used there.
+* Do not override role defaults or vars or input parameters using `set_fact`.
+  Use a different name instead.
++
+[%collapsible]
+====
+Rationale:: a fact set using `set_fact` can not be unset and it will override the role default or role variable in all subsequent invocations of the role in the same playbook.
+A fact has a different priority than other variables and not the highest, so in some cases overriding a given parameter will not work because the parameter has a higher priority (https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable[Ansible User Guide » Using Variables])
+====
+
+* Use the smallest scope for variables.
+  Facts are global for playbook run, so it is preferable to use other types of variables. Therefore limit (preferably avoid) the use of `set_fact`.
+  Role variables are exposed to the whole play when the role is applied using `roles:` or `import_role:`. A more restricted scope such as task or block variables is preferred.
+* Beware of `ignore_errors: true`; especially in tests.
+  If you set on a block, it will ignore all the asserts in the block ultimately making them pointless.
+* Do not use the `eq`, `equalto`, or `==` Jinja tests introduced in Jinja 2.10, use Ansible built-in `match`, `search`, or `regex` instead.
++
+[%collapsible]
+====
+Explanation:: The issue is only with Jinja versions older than 2.10.
+RPM distributions of Ansible generally use the underlying OS platform python library for Jinja e.g. python-jinja2.
+This is especially problematic on EL7.
+The only supported Ansible RPM on that platform is 2.9, which uses the EL7 platform python-jinja2 library, which is 2.7 (and will likely never be upgraded).
+As of mid-2022, there are many users using EL7 for the control node.
+I believe this means AAP 1.x users will also be affected.
+Users not affected:
+* AAP 2.x users - there should be an option to use EL8 runners, or otherwise, build the EEs in such a way as to use Jinja 2.11 or later
+* Users running Ansible from a pip install
+* Users running Ansible installed via RPM on EL8 or later
+Rationale:: These tests are not present in versions of Jinja older than 2.10, which are used on older controller platforms, such as EL7.
+If you want to ensure that your code works on older platforms, use the built-in Ansible tests such as (https://docs.ansible.com/ansible/latest/user_guide/playbooks_tests.html#testing-strings[match]), (https://docs.ansible.com/ansible/latest/user_guide/playbooks_tests.html#testing-strings[search]), or (https://docs.ansible.com/ansible/latest/user_guide/playbooks_tests.html#testing-strings[regex]) instead.
+Example::
+You have a `list` of `dict`, and you want to filter out elements that have the key `type` with the value `bad_type`.
+
+.Do this:
+[source,yaml]
+----
+tasks:
+  - name: Do something
+    some.module:
+      param: "{{ list_of_dict | rejectattr('type', 'search', '^bad_type$') | list }}"
+----
+
+.Don't do this:
+[source,yaml]
+----
+tasks:
+  - name: Do something
+    some.module:
+      param: "{{ list_of_dict | rejectattr('type', 'eq', 'bad_type') | list }}"
+----
+When using `match`, `search`, or `regex`, and you want an exact match, you must specify the regex `^STRING$`, otherwise, you will match partial strings.
+====
+
+* Avoid the use of `when: foo_result is changed` whenever possible.
+  Use handlers, and, if necessary, handler chains to achieve this same result.
+* Use the various include/import statements in Ansible.
++
+[%collapsible]
+====
+Explanation:: Doing so can lead to simplified code and a reduction of repetition.
+This is the closest that Ansible comes to callable sub-routines, so use judgment about callable routines to know when to similarly include a sub playbook.
+Some examples of good times to do so are
+* When a set of multiple commands share a single `when` conditional
+* When a set of multiple commands are being looped together over a list of items
+* When a single large role is doing many complicated tasks and cannot easily be broken into multiple roles, but the process proceeds in multiple related stages
+====
+
+* Avoid calling the `package` module iteratively with the `{{ item }}` argument, as this is impressively more slow than calling it with the line `name: "{{ foo_packages }}"`.
+The same can go for many other modules that can be given an entire list of items all at once.
+* Use meta modules when possible.
++
+[%collapsible]
+====
+Rationale:: This will allow our playbooks to run on the widest selection of operating systems possible without having to modify any more tasks than is necessary.
+Examples::
+* Instead of using the `upstart` and `systemd` modules, use the `service`
+module when at all possible.
+* Similarly for package management, use `package` instead of `yum` or `dnf` or
+similar.
+====
+
+* Avoid the use of `lineinfile` wherever that might be feasible.
++
+[%collapsible]
+====
+Rationale:: Slight miscalculations in how it is used can lead to a loss of idempotence.
+Modifying config files with it can cause the Ansible code to become arcane and difficult to read, especially for someone not familiar with the file in question.
+Try editing files directly using other built-in modules (e.g. `ini_file`, `blockinfile`, `xml`), or reading and parsing.
+If you are modifying more than a tiny number of lines or in a manner more than trivially complex, try leveraging the `template` module, instead.
+This will allow the entire structure of the file to be seen by later users and maintainers.
+The use of `lineinfile` should include a comment with justification.
+Alternatively, most configuration files have their own modules, such as https://docs.ansible.com/ansible/latest/collections/community/general/ssh_config_module.html[community.general.ssh_config] or https://docs.ansible.com/ansible/latest/collections/community/general/nmcli_module.html[community.general.nmcli].
+Using these make code cleaner to read and ensure idempotence.
+====
+
+* Limit use of the `copy` module to copying remote files, static files, and to uploading binary blobs.
+  For most file pushes, use the `template` module.
+  Even if there currently is nothing in the file that is being templated, if there is the possibility in the future that it might be added, having the file handled by the `template` module now makes adding that functionality much simpler than if the file is initially handled by the `copy` module and then needs to be moved before it can be edited.
+* When using the `template` module, append `.j2` to the template file name.
++
+[%collapsible]
+====
+Example:: If you want to use the `ansible.builtin.template` module to create a file called `example.conf` somewhere on the managed host, name the template for this file `templates/example.conf.j2`.
+Rationale:: When you are at the stage of writing a template file you usually already know how the file should end up looking on the file system, so at that point it is convenient to use Jinja2 syntax highlighting to make sure your templating syntax checks out.
+Should you need syntax highlighting for whatever language the target file should be in, it is very easy to define in your editor settings to use, e.g., HTML syntax highlighting for all files ending in `.html.j2`.
+It is much less straightforward to automatically enable Jinja2 syntax highlighting for _some_ files ending on `.html`.
+====
+
+* Keep filenames and templates as close to the name on the destination system as possible.
++
+[%collapsible]
+====
+Rationale:: This will help with both editor highlighting as well as identifying source and destination versions of the file at a glance.
+Avoid duplicating the remote full path in the role directory, however, as that creates unnecessary depth in the file tree for the role.
+Grouping sets of similar files into a subdirectory of `templates` is allowable, but avoid unnecessary depth to the hierarchy.
+====
+
+* Using agnostic modules like `package` only makes sense if the features required are very limited.
+  In many cases, if the platform is different, the package name is also different so that using `package` doesn't help a lot.
+  Prefer then the more specific `yum`, `dnf` or `apt` module if you anyway need to differentiate.
+
+* Use `float`, `int`, and `bool` filters to "cast" public API variables to ensure type safety, especially for numeric operations in Jinja.
++
+[%collapsible]
+====
+Example:: Variables set by users in the public API are not guaranteed to be any specific data type, and may be `str` type when some numeric type is expected:
+```
+> ansible -c local -i localhost --extra-vars int_val=1 localhost -m debug -a "msg={{ int_val < 0 }}"
+localhost | FAILED! => {
+    "msg": "Unexpected templating type error occurred on ({{ int_val < 0 }}): '<' not supported between instances of 'str' and 'int'"
+}
+```
+
+Rationale:: It is generally not possible to guarantee that all user inputs retain their desired numeric type, and if not, will likely be `str` type.
+If you use numeric variables where the value comes from user input, use the `float`, `int`, and `bool` filters to "cast" the values to the type for numeric operations.
+If you are simply converting the value to a string, you do not have to use the cast.
+Numeric operations include:
+
+* arithmetic: `int_var + 3`, `float_var * 3.14159`
+* comparison: `int_var == 0`, `float_var >= 2.71828`
+* unary: `-int_var`, `+float_var`
+
+Here are some examples:
+```
+> ansible -c local -i localhost --extra-vars int_val=1 localhost -m debug -a "msg={{ int_val | int < 0 }}"
+localhost | SUCCESS => {
+    "msg": false
+}
+
+> ansible -c local -i localhost -e float_val=0.5 localhost -m debug -a "msg='float_val is less than 1.0 {{ float_val | float + 0.1 < 1.0 }}'"
+localhost | SUCCESS => {
+    "msg": "float_val is less than 1.0 True"
+}
+
+```
+====
+
+== Wrap longer lines of code
+
+ansible-lint has a pretty short line length, which causes problems if you are trying to use good programming practices by having descriptive variable names, which usually end up being quite long.
+Here are some examples of how to deal with line wrapping in common scenarios:
+
+* Jinja expressions can be wrapped.
+  Within the Jinja expression, whitespace and newline characters aren't significant, so take advantage of this to wrap lines into as readable a form as possible.
+  Remember, in a `when`, `that`, `failed_when`, or other such keywords, you can just write Jinja code - you do not need the `"{{ ... }}"`
+
+* Start an expression with '{{' followed by newline if the line will otherwise be too long.
+  But what if the code is already indented a lot, and the variable I'm assigning to is already very long, and I can't put anything else on the line?
+  Just start the assignment on the next line.
+
+* Use backslash escapes in double quoted strings.
+  But what if I have a very long string that I cannot use `>-` to wrap because I cannot have extra spaces in the value e.g. like a url value?
+  Use a backslash escape in a double quoted string.
+  YAML will concatenate the values with no spaces.
+
+[%collapsible]
+====
+Rationale:: Use of whitespace and multi-line indentation makes expressions easier to read.
+
+.Do this:
+[source,yaml]
+----
+- name: Wrap long Jinja expressions
+  foo: "{{ a_very.long_variable.name |
+    somefilter('with', 'many', 'arguments') |
+    another_filter | list }}"
+  when: a_very.long_variable.name |
+    somefilter('with', 'many', 'arguments') |
+    another_filter | list
+
+- name: Wrap when first line is already too long
+  very_indented_foo: "{{
+    a_very.long_variable.name |
+    somefilter('with', 'many', 'arguments') |
+    another_filter | list }}"
+  when: \
+    a_very.long_variable.name |
+    somefilter('with', 'many', 'arguments') |
+    another_filter | list | length > 0
+
+- name: Set some test variables
+  set_fact:
+    my_very_long_variable_1: "{{ __pre_digest | filter1 }}"
+    my_very_long_variable_2: "{{ __pre_digest | filter2 }}"
+  vars:
+    __pre_digest: "{{ a_very.long_variable.name | some_filter }}"
+
+- name: Use a very long URL
+  uri:
+    url: "https://{{ my_very_long_value_for_hostname }}:\
+      {{ my_very_long_value_for_port }}\
+      {{ my_very_long_value_for_uri }}?\
+      {{ my_very_long_value_for_query }}"
+
+----
+
+.Don't do this:
+[source,yaml]
+----
+- name: Very long line with Jinja expression
+  foo: "{{ a_very.long_variable.name | somefilter('with', 'many', 'arguments') | another_filter | list }}"
+
+- name: First line is already too long
+  very_indented_foo: "{{ a_very.long_variable.name |
+    somefilter('with', 'many', 'arguments') |
+    another_filter | list }}"
+  when: a_very.long_variable.name |
+    somefilter('with', 'many', 'arguments') |
+    another_filter | list | length > 0
+
+- name: Redundancy in expressions
+  set_fact:
+    my_very_long_variable_1: "{{ a_very.long_variable.name | some_filter | filter1 }}"
+    my_very_long_variable_2: "{{ a_very.long_variable.name | some_filter | filter2 }}"
+
+- name: URL string is too long
+  uri:
+    url: "https://{{ my_very_long_value_for_hostname }}:{{ my_very_long_value_for_port }}{{ my_very_long_value_for_uri }}{{ my_very_long_value_for_query }}"
+----
+====

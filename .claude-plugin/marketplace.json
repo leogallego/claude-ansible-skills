@@ -68,6 +68,21 @@
       ]
     },
     {
+      "name": "ansible-cop-review",
+      "source": "./ansible-cop-review",
+      "description": "[DEPRECATED: use ansible-good-practices instead] Review Ansible code against Red Hat CoP automation good practices. Use when the user wants to audit, lint, review, check, or validate Ansible roles, playbooks, collections, or inventory for compliance with CoP rules.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Leo Gallego",
+        "email": "leogallego@gmail.com"
+      },
+      "repository": "https://github.com/leogallego/claude-ansible-skills",
+      "license": "GPL-3.0-or-later",
+      "tags": [
+        "ansible"
+      ]
+    },
+    {
       "name": "ansible-zen",
       "source": "./ansible-zen",
       "description": "Display the Zen of Ansible principles and review Ansible code against them. Use when the user wants to see the Zen of Ansible, get philosophical guidance on their automation approach, or review code for simplicity, readability, and clarity. Use when user says \"zen of ansible\", \"simplify my playbook\", \"is this too complex\", or \"clean code review\". Do NOT use for strict rule compliance (use ansible-good-practices instead).",

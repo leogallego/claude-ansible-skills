@@ -100,7 +100,17 @@ handler generation, argument_specs, platform support patterns, and all CoP
 compliance rules. Do not just create empty role skeletons.
 
 ### Plugins
-If the user requested custom plugins, generate proper skeletons:
+If the user requested custom plugins, use `ansible-creator add plugin` when
+available. For each plugin, run:
+
+```
+ansible-creator add plugin <type> <name> <collection_path>
+```
+
+Supported types: `action`, `filter`, `lookup`, `module`, `test`.
+
+If `ansible-creator` is not installed, fall back to creating plugin skeletons
+manually:
 
 - **Modules** — create in `plugins/modules/<name>.py` with:
   - Full `DOCUMENTATION`, `EXAMPLES`, and `RETURN` docstrings
@@ -116,7 +126,8 @@ If the user requested custom plugins, generate proper skeletons:
   - `ActionModule` class extending `ActionBase`
   - Docstring explaining the action's purpose
 
-Keep `__init__.py` files in all plugin directories.
+Whether using `ansible-creator` or manual creation, ensure all plugin
+directories contain `__init__.py` files.
 
 ### Cleanup sample/placeholder content
 - Remove or replace the sample plugins (`sample_action.py`,

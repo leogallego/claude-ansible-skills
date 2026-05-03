@@ -1,0 +1,5 @@
+{
+  "name": "ansible-docs",
+  "version": "1.0.0",
+  "description": "Answer Ansible questions and review Ansible code using official documentation. Use when the user asks about Ansible concepts, syntax, best practices, deprecations, or wants Ansible code reviewed against official docs. Use when user says \"check my playbook against docs\", \"what does Ansible say about X\", \"how do I use module Y\", or \"review my role\". Do NOT use for CoP good practices review (use ansible-good-practices instead). Do NOT use for general Python or YAML questions unrelated to Ansible."
+}

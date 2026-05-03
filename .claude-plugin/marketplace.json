@@ -8,6 +8,36 @@
   },
   "plugins": [
     {
+      "name": "ansible-cop-review",
+      "source": "./ansible-cop-review",
+      "description": "Review Ansible code against Red Hat CoP automation good practices. Use when the user wants to audit, lint, review, check, or validate Ansible roles, playbooks, collections, or inventory for compliance with CoP rules. Use when user says \"lint my role\", \"check my playbook\", \"review best practices\", or \"audit my Ansible code\". Do NOT use for general Python or YAML linting unrelated to Ansible.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Leo Gallego",
+        "email": "leogallego@gmail.com"
+      },
+      "repository": "https://github.com/leogallego/claude-ansible-skills",
+      "license": "GPL-3.0-or-later",
+      "tags": [
+        "ansible"
+      ]
+    },
+    {
+      "name": "ansible-docs",
+      "source": "./ansible-docs",
+      "description": "Answer Ansible questions and review Ansible code using official documentation. Use when the user asks about Ansible concepts, syntax, best practices, deprecations, or wants Ansible code reviewed against official docs. Use when user says \"check my playbook against docs\", \"what does Ansible say about X\", \"how do I use module Y\", or \"review my role\". Do NOT use for CoP good practices review (use ansible-good-practices instead). Do NOT use for general Python or YAML questions unrelated to Ansible.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Leo Gallego",
+        "email": "leogallego@gmail.com"
+      },
+      "repository": "https://github.com/leogallego/claude-ansible-skills",
+      "license": "GPL-3.0-or-later",
+      "tags": [
+        "ansible"
+      ]
+    },
+    {
       "name": "ansible-good-practices",
       "source": "./ansible-good-practices",
       "description": "Review Ansible code against Red Hat CoP automation good practices. Use when the user wants to audit, lint, review, check, or validate Ansible roles, playbooks, collections, or inventory for compliance with CoP rules. Use when user says \"lint my role\", \"check my playbook\", \"review best practices\", or \"audit my Ansible code\". Do NOT use for general Python or YAML linting unrelated to Ansible.",
@@ -56,21 +86,6 @@
       "name": "ansible-scaffold-role",
       "source": "./ansible-scaffold-role",
       "description": "Scaffold a new Ansible role following all Red Hat CoP good practices. Use when the user wants to create, generate, or bootstrap a new Ansible role. Use when user says \"create a role\", \"new role\", \"scaffold role\", or \"generate role skeleton\". Leverages ansible-creator when available. Do NOT use for reviewing existing roles (use ansible-good-practices instead).",
-      "version": "1.0.0",
-      "author": {
-        "name": "Leo Gallego",
-        "email": "leogallego@gmail.com"
-      },
-      "repository": "https://github.com/leogallego/claude-ansible-skills",
-      "license": "GPL-3.0-or-later",
-      "tags": [
-        "ansible"
-      ]
-    },
-    {
-      "name": "ansible-cop-review",
-      "source": "./ansible-cop-review",
-      "description": "[DEPRECATED: use ansible-good-practices instead] Review Ansible code against Red Hat CoP automation good practices. Use when the user wants to audit, lint, review, check, or validate Ansible roles, playbooks, collections, or inventory for compliance with CoP rules.",
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",

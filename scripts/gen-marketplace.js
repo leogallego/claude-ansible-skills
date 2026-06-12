@@ -23,18 +23,19 @@ const plugins = readdirSync('.', { withFileTypes: true })
     const description = descMatch
       ? descMatch[1].split('\n').map(l => l.trim()).filter(Boolean).join(' ')
       : frontmatter.match(/^description:\s*(.+)$/m)?.[1]?.trim()
+    const version = frontmatter.match(/^\s*version:\s*(.+)$/m)?.[1]?.trim() || '1.0.0'
 
     // Generate plugin.json for each plugin
     const pluginDir = join(d.name, '.claude-plugin')
     if (!existsSync(pluginDir)) mkdirSync(pluginDir, { recursive: true })
-    const pluginJson = { name, version: '1.0.0', description }
+    const pluginJson = { name, version, description }
     writeFileSync(join(pluginDir, 'plugin.json'), JSON.stringify(pluginJson, null, 2) + '\n')
 
     return {
       name,
       source: `./${d.name}`,
       description,
-      version: '1.0.0',
+      version,
       author: owner,
       repository: 'https://github.com/leogallego/claude-ansible-skills',
       license: 'GPL-3.0-or-later',

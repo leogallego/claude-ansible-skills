@@ -18,7 +18,11 @@ done
 
 BASE_URL="https://raw.githubusercontent.com/${REPO}/${REF}"
 
-SECTIONS=(structures roles collections playbooks inventories plugins coding_style)
+SECTIONS=(
+  structures roles collections playbooks inventories plugins coding_style
+  aap_configuration cicd_and_promotion git_workflow naming_conventions
+  security testing
+)
 
 # Where this script lives — resolve to repo root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -33,6 +37,12 @@ declare -A SECTION_MAP=(
   [inventories]="ansible-good-practices"
   [plugins]="ansible-good-practices"
   [coding_style]="ansible-good-practices,ansible-scaffold-role,ansible-scaffold-collection,ansible-scaffold-ee"
+  [aap_configuration]="ansible-good-practices"
+  [cicd_and_promotion]="ansible-good-practices,ansible-scaffold-collection"
+  [git_workflow]="ansible-good-practices"
+  [naming_conventions]="ansible-good-practices,ansible-scaffold-role,ansible-scaffold-collection"
+  [security]="ansible-good-practices,ansible-scaffold-role"
+  [testing]="ansible-good-practices,ansible-scaffold-role,ansible-scaffold-collection"
 )
 
 echo "Fetching CoP references from ${REPO}@${REF}..."

@@ -61,11 +61,11 @@ Based on the files in the review scope, load only the relevant sections:
 | `tasks/` `defaults/` `vars/` `meta/` `handlers/` `templates/` | roles, coding_style, naming_conventions, security, testing | 22,500 |
 | Playbooks (`.yml` with `hosts:`) | playbooks, coding_style, naming_conventions | 9,400 |
 | `inventory/` `group_vars/` `host_vars/` | inventories, security | 7,700 |
-| `galaxy.yml` present | collections, roles, coding_style, naming_conventions, testing | 21,400 |
-| `plugins/` `modules/` | plugins, coding_style, testing | 12,300 |
+| `galaxy.yml` present | collections, roles, coding_style, naming_conventions, testing | 19,700 |
+| `plugins/` `modules/` | plugins, coding_style, testing | 10,400 |
 | AAP CaC repos (`controller_*` vars, `infra.aap_configuration` refs) | aap_configuration, naming_conventions, security | 7,400 |
 | `.github/` `.gitlab-ci.yml` `Makefile` CI/CD configs | cicd_and_promotion, git_workflow, testing | 6,800 |
-| `molecule/` test dirs | testing, coding_style | 6,800 |
+| `molecule/` test dirs | testing, coding_style | 8,500 |
 | `ansible-vault` encrypted files, credential references | security | 2,900 |
 | Unclear or full review | All 13 sections | 39,700 |
 

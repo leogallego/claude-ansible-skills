@@ -46,6 +46,16 @@ Scaffold a new Ansible execution environment project using `ansible-creator`.
 - CI/CD pipeline generation for GitHub Actions or GitLab CI (build, test, push to registry)
 - Falls back to manual creation when `ansible-creator` is not installed
 
+### ansible-docs
+
+Answer Ansible questions and review code against official Ansible ecosystem documentation.
+
+- Covers 6 doc sources: ansible-core, ansible-lint, ansible-navigator, ansible-builder, ansible-creator, molecule
+- Q&A mode — search docs, answer grounded in official documentation with URL citations
+- Code review mode — identify directives/modules in code, review against official docs
+- Requires the [`ansible-know` MCP server](https://github.com/leogallego/ansible-know-mcp) (v0.7.0+) — install with `uvx ansible-know-mcp`
+- Complements ansible-good-practices (official docs vs CoP rules)
+
 ### ansible-zen
 
 Display the Zen of Ansible and review code against its 20 principles.
@@ -130,6 +140,7 @@ Once installed, invoke skills in Claude Code with their slash command:
 
 ## Dependencies
 
+- **ansible-know MCP server** — required by the ansible-docs skill for documentation discovery and retrieval (install with `uvx ansible-know-mcp` or `claude mcp add ansible-know -- uvx ansible-know-mcp`)
 - **ansible-creator** — used by scaffold skills to generate base skeletons (optional — skills fall back to manual creation)
 - **ansible-lint** — used by the review skill for cross-referencing (optional)
 - **CoP rules** — skills load rules from bundled `references/*.adoc` files (per-section AsciiDoc from [redhat-cop/automation-good-practices](https://github.com/redhat-cop/automation-good-practices)), with GitHub fetch as fallback and CLAUDE.md as last resort

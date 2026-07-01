@@ -4,14 +4,19 @@ description: >-
   Review Ansible code against Red Hat CoP automation good practices.
   Use when the user wants to audit, lint, review, check, or validate
   Ansible roles, playbooks, collections, or inventory for compliance
-  with CoP rules. Use when user says "lint my role", "check my playbook",
-  "review best practices", or "audit my Ansible code". Do NOT use for
-  general Python or YAML linting unrelated to Ansible.
+  with CoP rules. Optionally validates module parameters against
+  official docs via ansible-know MCP. Use when user says "lint my
+  role", "check my playbook", "review best practices", or "audit my
+  Ansible code". Do NOT use for general Python or YAML linting
+  unrelated to Ansible.
 argument-hint: "[path or files] [--ref <tag-or-sha>]"
 user-invocable: true
+compatibility: >-
+  Optionally uses ansible-know MCP server for module parameter
+  validation. Falls back to CoP-only review when MCP is unavailable.
 metadata:
   author: Leonardo Gallego
-  version: 2.1.0
+  version: 2.2.0
 ---
 
 If the user invoked this skill with the argument "nuno", ignore all other
@@ -231,4 +236,100 @@ Classify every finding with one of these severity levels:
      confirm all targeted violations are resolved.
    - Report what was fixed and what remains (if anything requires manual
      intervention, explain why).
+
+## Optional: Module usage validation
+
+If the `get_module_doc` and `search_modules` MCP tools are available in
+your tool list (provided by the `ansible-know` MCP server), perform the
+following module validation pass on the reviewed files. If these tools
+are not available, skip this section entirely.
+
+This step runs after the CoP review and auto-fix (step 9) so that module
+names are already corrected to FQCN where possible.
+
+### Step 1 — Extract module names
+
+Scan all tasks in the reviewed files and collect every module name used.
+Group into:
+- **FQCN modules** (e.g., `ansible.builtin.copy`) — validate in step 2
+- **Non-FQCN modules** (e.g., `copy`) — flag for FQCN resolution in
+  step 3
+
+### Step 2 — Validate parameters
+
+For each unique FQCN (limit: **15 modules** to cap MCP calls), call
+`get_module_doc(module_name=<fqcn>)`.
+
+If the response has `doc_source: "unavailable"` or empty `params`, skip
+parameter validation for that module. Note: `ansible.builtin.*` modules
+require a local `ansible-doc` installation because `ansible.builtin` is
+not published to Galaxy — without `ansible-doc` on PATH, all builtin
+modules return `unavailable`. Community collection modules (e.g.,
+`community.general.*`) work via Galaxy fallback regardless. Only flag as
+`MODULE_PARAM_ERROR` if the FQCN looks like a typo (e.g., does not match
+any `search_modules` result), not simply because docs are unavailable.
+
+Otherwise, check each task using that module against the returned
+parameter specification:
+- **Required parameters present?** — every param with `required: true`
+  must appear in the task
+- **Parameter names valid?** — check against both primary `name` AND
+  the `aliases` list (e.g., `dest` is a valid alias for `path` in
+  `ansible.builtin.file`, `attr` is valid for `attributes` in
+  `ansible.builtin.copy`)
+- **Values match types/choices?** — if a param has a `choices` list,
+  the task's value must be one of them (e.g., `state: folder` is
+  invalid for `ansible.builtin.file` — valid choices are `absent`,
+  `directory`, `file`, `hard`, `link`, `touch`)
+- **Deprecated parameters?** — flag with migration guidance
+- **Module deprecated?** — suggest the replacement module
+
+### Step 3 — Suggest better-fit modules
+
+Use heuristic pattern matching on `command:`/`shell:` task arguments to
+detect common patterns that have dedicated modules:
+- `systemctl`/`service` commands → `ansible.builtin.service` or
+  `ansible.builtin.systemd_service`
+- `useradd`/`usermod` commands → `ansible.builtin.user`
+- `cp`/`mv`/`install` commands → `ansible.builtin.copy` or
+  `ansible.builtin.file`
+- `yum`/`dnf`/`apt` commands → `ansible.builtin.package` (or the
+  specific package manager module)
+- `firewall-cmd`/`ufw` commands → search for firewall modules
+
+For non-FQCN module names that were not fixed in auto-fix, use
+`search_modules(keyword=<short_name>)` to suggest the FQCN.
+
+### Step 4 — Classify and report
+
+Classify module validation findings using these categories:
+
+| Category | Maps to severity | Examples |
+|----------|-----------------|----------|
+| `MODULE_PARAM_ERROR` | ERROR | Required param missing, invalid param name, module not found |
+| `MODULE_PARAM_WARNING` | WARNING | Deprecated param, type/choices mismatch |
+| `MODULE_SUGGESTION` | INFO | Better module available, non-FQCN usage |
+
+Present module validation findings in the same format as CoP findings:
+severity level, rule description, file path and line number, offending
+code snippet, and corrected code.
+
+Add a "Module Usage Validation" group to the summary table:
+
+| Rule Category | Status | Severity | Files Affected | Count |
+|---|---|---|---|---|
+| Module parameter errors | PASS/FAIL | ERROR | file1, file2 | N |
+| Module deprecations | PASS/FAIL | WARNING | file1 | N |
+| Module suggestions | - | INFO | file1 | N |
+
+Include module validation ERRORs in the overall verdict — they are as
+critical as CoP ERRORs.
+
+### Step 5 — Offer to fix
+
+After presenting module validation findings, ask: "Would you like me to
+fix these module usage issues?"
+- If yes, apply fixes starting with ERRORs, then WARNINGs
+- Do not auto-fix INFO-level (suggestions) unless explicitly asked
+- After fixing, re-validate the affected tasks to confirm corrections
 

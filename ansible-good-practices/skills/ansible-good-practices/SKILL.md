@@ -15,7 +15,7 @@ compatibility: >-
   Optionally uses ansible-know MCP server for module parameter
   validation. Falls back to CoP-only review when MCP is unavailable.
 metadata:
-  author: Leonardo Gallego
+  author: leogallego
   version: 2.2.0
 ---
 

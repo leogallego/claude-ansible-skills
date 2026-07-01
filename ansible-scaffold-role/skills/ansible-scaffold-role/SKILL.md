@@ -16,7 +16,7 @@ compatibility: >-
   Requires ansible-creator CLI (optional, falls back to manual creation).
   Optionally uses ansible-know MCP server for module-aware task generation.
 metadata:
-  author: Leonardo Gallego
+  author: leogallego
   version: 1.1.0
 ---
 

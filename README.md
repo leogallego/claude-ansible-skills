@@ -140,6 +140,7 @@ Once installed, invoke skills in Claude Code with their slash command:
 
 ## Dependencies
 
+- **ansible-know MCP server** — required by the ansible-docs skill for documentation discovery and retrieval (install with `uvx ansible-know-mcp` or `claude mcp add ansible-know -- uvx ansible-know-mcp`)
 - **ansible-creator** — used by scaffold skills to generate base skeletons (optional — skills fall back to manual creation)
 - **ansible-lint** — used by the review skill for cross-referencing (optional)
 - **CoP rules** — skills load rules from bundled `references/*.adoc` files (per-section AsciiDoc from [redhat-cop/automation-good-practices](https://github.com/redhat-cop/automation-good-practices)), with GitHub fetch as fallback and CLAUDE.md as last resort

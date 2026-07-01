@@ -58,7 +58,9 @@ session. If either tool is not available:
 
 ## Documentation sources
 
-The ansible-know MCP server provides documentation from six sources:
+To discover the current list of available sources and their descriptions,
+read the `docs://sources` MCP resource from the ansible-know server.
+The table below is a quick reference (as of July 2026):
 
 | Source | Covers |
 |--------|--------|
@@ -69,14 +71,12 @@ The ansible-know MCP server provides documentation from six sources:
 | `ansible-creator` | Content creation, EE scaffolding |
 | `molecule` | Test scenarios, configuration, getting started |
 
+If `docs://sources` returns additional sources not listed above, use
+them — the MCP server is the authoritative source of truth.
+
 When the user's question clearly targets a specific tool, pass the
-`source` parameter to `search_docs` to narrow results:
-- Lint rule questions → `source: "ansible-lint"`
-- Execution environment questions → `source: "ansible-builder"`
-- Molecule testing questions → `source: "molecule"`
-- Navigator questions → `source: "ansible-navigator"`
-- Content scaffolding questions → `source: "ansible-creator"`
-- General Ansible questions → omit `source` to search all
+`source` parameter to `search_docs` to narrow results. For general
+Ansible questions, omit `source` to search all available sources.
 
 ## How to answer questions
 
@@ -135,10 +135,12 @@ After each fetch, track the cumulative `tokens` from the response.
 When the budget is tight:
 - Fetch the single most relevant page first. If it consumes less
   than 30,000 tokens, fetch a second page.
-- Use the `max_tokens` parameter as a guard on individual fetches
-  to avoid loading unexpectedly large pages.
-- If `fetch_doc` returns an error (page too large, unavailable),
-  skip it and note to the user that the page could not be loaded.
+- Use the `max_tokens` parameter as a guard on individual fetches.
+  When `max_tokens` is set and the page exceeds it, `fetch_doc`
+  returns an error (not truncated content) — retry without
+  `max_tokens` if budget allows, or skip the page.
+- If `fetch_doc` returns any error, skip the page and note to the
+  user that it could not be loaded.
 
 After fetching, extract the relevant sections from the markdown
 content rather than using the entire page verbatim.
@@ -152,8 +154,10 @@ containing a question, or no code path):
 
 1. Search and fetch the most relevant documentation (Steps 1-3 above)
 2. Answer the question grounded in the fetched docs
-3. **Cite sources** — for every claim, reference the source URL and
-   section heading. Format: `(source: {url}, section: "{heading}")`
+3. **Cite sources** — for every claim, reference the documentation URL
+   and section heading. Use the `source_url` field from `fetch_doc`
+   responses (or the `url` field from `search_docs` results if the
+   page was not fetched). Format: `(source: <url>, section: "{heading}")`
 4. If the docs do not cover the topic, say so explicitly:
    "The available Ansible documentation does not cover this topic."
 5. Provide code examples from the docs when they exist

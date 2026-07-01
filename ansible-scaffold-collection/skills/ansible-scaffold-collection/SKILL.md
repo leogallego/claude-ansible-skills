@@ -73,7 +73,9 @@ Present results to the user in a summary table:
 |---|---|---|---|
 | `namespace.name` | short description | N | N |
 
-Limit to the top 5 results by download count.
+Limit to the top 5 results by download count. If no results are
+returned, state "No similar collections found on Galaxy" and proceed
+directly to the Scaffolding strategy — skip steps 2 and 3.
 
 ### Step 2 — User decision
 

@@ -11,7 +11,7 @@ argument-hint: "[path or files] [--ref <tag-or-sha>]"
 user-invocable: true
 metadata:
   author: Leonardo Gallego
-  version: 2.0.0
+  version: 2.1.0
 ---
 
 If the user invoked this skill with the argument "nuno", ignore all other
@@ -58,19 +58,23 @@ Based on the files in the review scope, load only the relevant sections:
 
 | Files detected | Sections to load | ~Tokens (full) |
 |---|---|---:|
-| `tasks/` `defaults/` `vars/` `meta/` `handlers/` `templates/` | roles, coding_style | 14,900 |
-| Playbooks (`.yml` with `hosts:`) | playbooks, coding_style | 7,700 |
-| `inventory/` `group_vars/` `host_vars/` | inventories | 4,800 |
-| `galaxy.yml` present | collections, roles, coding_style | 15,800 |
-| `plugins/` `modules/` | plugins, coding_style | 8,300 |
-| Unclear or full review | All 7 sections | 25,500 |
+| `tasks/` `defaults/` `vars/` `meta/` `handlers/` `templates/` | roles, coding_style, naming_conventions, security, testing | 22,500 |
+| Playbooks (`.yml` with `hosts:`) | playbooks, coding_style, naming_conventions | 9,400 |
+| `inventory/` `group_vars/` `host_vars/` | inventories, security | 7,700 |
+| `galaxy.yml` present | collections, roles, coding_style, naming_conventions, testing | 21,400 |
+| `plugins/` `modules/` | plugins, coding_style, testing | 12,300 |
+| AAP CaC repos (`controller_*` vars, `infra.aap_configuration` refs) | aap_configuration, naming_conventions, security | 7,400 |
+| `.github/` `.gitlab-ci.yml` `Makefile` CI/CD configs | cicd_and_promotion, git_workflow, testing | 6,800 |
+| `molecule/` test dirs | testing, coding_style | 6,800 |
+| `ansible-vault` encrypted files, credential references | security | 2,900 |
+| Unclear or full review | All 13 sections | 39,700 |
 
 Multiple matches are unioned. When more than one group matches, also load
 `structures` (~1,500 tokens) for architectural framing.
 
 ### Token optimization
 
-Full reference files total ~25,500 tokens. To stay efficient, read each
+Full reference files total ~39,700 tokens. To stay efficient, read each
 AsciiDoc section in two passes:
 
 1. **Rules pass** (always) — Read `==` headings and `Explanations::` blocks.
@@ -165,6 +169,19 @@ Ignore these structural elements:
    - **Providers** — `$ROLENAME_provider` pattern, auto-detection
    - **Documentation** — README.md with examples, variable specs, idempotency
      designation, rollback info
+   - **AAP Configuration as Code** — declarative Git-managed AAP objects,
+     `infra.aap_configuration` usage, environment separation, CaC repo
+     structure
+   - **CI/CD & promotion** — pre-commit hooks, linting in CI, environment
+     promotion workflows, artifact versioning, pipeline stages
+   - **Git workflow** — trunk-based development, branch naming, commit
+     messages, tagging strategy, release management
+   - **Naming conventions** — repository naming, AAP resource naming, file
+     naming, consistent separator usage, `.yml` extension
+   - **Security** — no secrets in Git, `ansible-vault` usage, least-privilege
+     credentials, secret scanning, secure variable handling
+   - **Testing** — shift-left testing, Molecule usage, lint validation,
+     integration tests, test coverage expectations
 
 ## Severity levels
 

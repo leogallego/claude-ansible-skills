@@ -14,7 +14,7 @@ description: >-
 argument-hint: "[question or code path]"
 user-invocable: true
 metadata:
-  author: Leonardo Gallego
+  author: leogallego
   version: 2.0.0
 ---
 

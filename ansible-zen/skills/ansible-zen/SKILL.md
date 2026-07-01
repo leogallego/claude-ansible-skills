@@ -10,7 +10,7 @@ description: >-
 argument-hint: "[path or files]"
 user-invocable: true
 metadata:
-  author: Leonardo Gallego
+  author: leogallego
   version: 1.0.0
 ---
 

@@ -17,7 +17,7 @@ compatibility: >-
   Optionally uses ansible-know MCP server for collection discovery and
   skill generation.
 metadata:
-  author: Leonardo Gallego
+  author: leogallego
   version: 1.1.0
 ---
 

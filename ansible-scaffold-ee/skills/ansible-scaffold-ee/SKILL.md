@@ -11,7 +11,7 @@ disable-model-invocation: true
 user-invocable: true
 compatibility: Requires ansible-creator CLI (optional, falls back to manual creation)
 metadata:
-  author: Leonardo Gallego
+  author: leogallego
   version: 1.0.0
 ---
 

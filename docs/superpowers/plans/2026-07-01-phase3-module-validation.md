@@ -79,14 +79,9 @@ Group into:
 For each unique FQCN (limit: **15 modules** to cap MCP calls), call
 `get_module_doc(module_name=<fqcn>)`.
 
-If the response has `doc_source: "unavailable"` or empty `params`, skip
-parameter validation for that module. Note: `ansible.builtin.*` modules
-require a local `ansible-doc` installation because `ansible.builtin` is
-not published to Galaxy — without `ansible-doc` on PATH, all builtin
-modules return `unavailable`. Community collection modules (e.g.,
-`community.general.*`) work via Galaxy fallback regardless. Only flag as
-`MODULE_PARAM_ERROR` if the FQCN looks like a typo (e.g., does not match
-any `search_modules` result), not simply because docs are unavailable.
+If the response has `doc_source: "unavailable"` or empty `params`, flag
+the module as `MODULE_PARAM_ERROR` ("module not found — possible typo in
+FQCN") and skip parameter validation for it.
 
 Otherwise, check each task using that module against the returned
 parameter specification:

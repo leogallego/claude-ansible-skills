@@ -1,0 +1,186 @@
+name: Validate Skills
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: '20'
+
+      - name: Validate SKILL.md frontmatter
+        run: |
+          errors=0
+          for skill_file in */skills/*/SKILL.md; do
+            [ -f "$skill_file" ] || continue
+            dir_name=$(echo "$skill_file" | cut -d/ -f3)
+            plugin_dir=$(echo "$skill_file" | cut -d/ -f1)
+
+            # Extract frontmatter block
+            fm=$(sed -n '/^---$/,/^---$/p' "$skill_file" | sed '1d;$d')
+
+            # Required fields
+            for field in name description user-invocable; do
+              if ! echo "$fm" | grep -qE "^${field}:"; then
+                echo "::error file=${skill_file}::Missing required field: ${field}"
+                errors=$((errors + 1))
+              fi
+            done
+
+            # Version exists and is semver
+            version=$(echo "$fm" | grep -E '^\s+version:' | head -1 | sed 's/.*version:\s*"\?\([^"]*\)"\?/\1/')
+            if [ -z "$version" ]; then
+              echo "::error file=${skill_file}::Missing metadata.version"
+              errors=$((errors + 1))
+            elif ! echo "$version" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+              echo "::error file=${skill_file}::Version '${version}' is not valid semver (expected X.Y.Z)"
+              errors=$((errors + 1))
+            fi
+
+            # Name matches directory
+            name=$(echo "$fm" | grep -E '^name:' | head -1 | sed 's/name:\s*//')
+            if [ "$name" != "$dir_name" ]; then
+              echo "::error file=${skill_file}::Frontmatter name '${name}' does not match directory '${dir_name}'"
+              errors=$((errors + 1))
+            fi
+
+            # Version matches plugin.json
+            pjson="${plugin_dir}/.claude-plugin/plugin.json"
+            if [ -f "$pjson" ]; then
+              pj_version=$(grep '"version"' "$pjson" | sed 's/.*"\([0-9][^"]*\)".*/\1/')
+              if [ -n "$version" ] && [ "$version" != "$pj_version" ]; then
+                echo "::error file=${skill_file}::SKILL.md version '${version}' does not match plugin.json version '${pj_version}'"
+                errors=$((errors + 1))
+              fi
+            fi
+
+            echo "  ✓ ${skill_file} (${name} v${version})"
+          done
+
+          if [ $errors -gt 0 ]; then
+            echo "::error::Frontmatter validation failed with ${errors} error(s)"
+            exit 1
+          fi
+          echo "All SKILL.md frontmatter valid."
+
+      - name: Validate reference file integrity
+        run: |
+          errors=0
+
+          # Parse SECTION_MAP from update-cop-references.sh
+          # Extract lines between declare -A SECTION_MAP and the closing )
+          map_block=$(sed -n '/declare -A SECTION_MAP/,/^)/p' scripts/update-cop-references.sh)
+
+          # Build expected mappings: section -> plugin list
+          declare -A expected_refs
+          while IFS= read -r line; do
+            section=$(echo "$line" | sed -n 's/.*\[\([^]]*\)\]="\([^"]*\)".*/\1/p')
+            plugins=$(echo "$line" | sed -n 's/.*\[\([^]]*\)\]="\([^"]*\)".*/\2/p')
+            [ -z "$section" ] && continue
+            IFS=',' read -ra targets <<< "$plugins"
+            for plugin in "${targets[@]}"; do
+              expected_refs["${plugin}:${section}"]=1
+            done
+          done <<< "$map_block"
+
+          # Check every expected ref file exists
+          for key in "${!expected_refs[@]}"; do
+            plugin="${key%%:*}"
+            section="${key##*:}"
+            ref_file="${plugin}/references/${section}.adoc"
+            if [ ! -f "$ref_file" ]; then
+              echo "::error::Missing reference: ${ref_file} (mapped in SECTION_MAP)"
+              errors=$((errors + 1))
+            fi
+          done
+
+          # Check for orphan .adoc files not in any mapping
+          for ref_file in */references/*.adoc; do
+            [ -f "$ref_file" ] || continue
+            plugin=$(echo "$ref_file" | cut -d/ -f1)
+            section=$(basename "$ref_file" .adoc)
+            if [ -z "${expected_refs["${plugin}:${section}"]+x}" ]; then
+              echo "::warning file=${ref_file}::Orphan reference file not in SECTION_MAP"
+            fi
+          done
+
+          if [ $errors -gt 0 ]; then
+            echo "::error::Reference integrity check failed with ${errors} error(s)"
+            exit 1
+          fi
+          echo "All reference files present and accounted for."
+
+      - name: Check marketplace drift
+        run: |
+          node scripts/gen-marketplace.js > /dev/null
+          if ! git diff --exit-code .claude-plugin/marketplace.json */.claude-plugin/plugin.json; then
+            echo "::error::marketplace.json or plugin.json out of date — run 'node scripts/gen-marketplace.js' and commit"
+            exit 1
+          fi
+          echo "Marketplace index is up to date."
+
+      - name: Check token estimates
+        continue-on-error: true
+        run: |
+          skill_file="ansible-good-practices/skills/ansible-good-practices/SKILL.md"
+          ref_dir="ansible-good-practices/references"
+
+          # Map section names to .adoc files and get byte counts
+          declare -A section_bytes
+          for f in "${ref_dir}"/*.adoc; do
+            [ -f "$f" ] || continue
+            section=$(basename "$f" .adoc)
+            section_bytes[$section]=$(wc -c < "$f")
+          done
+
+          # Parse token table rows (lines with | sections | number |)
+          warnings=0
+          while IFS='|' read -r _ files sections tokens _; do
+            # Skip header and separator rows
+            echo "$tokens" | grep -qE '[0-9]' || continue
+
+            # Clean up fields
+            sections=$(echo "$sections" | xargs)
+            stated=$(echo "$tokens" | tr -d ', ' | xargs)
+            [ -z "$stated" ] || [ "$stated" = "~Tokens(full)" ] && continue
+
+            # Sum bytes for referenced sections
+            total_bytes=0
+            IFS=',' read -ra section_list <<< "$sections"
+            missing=0
+            for s in "${section_list[@]}"; do
+              s=$(echo "$s" | xargs)
+              if [ -n "${section_bytes[$s]+x}" ]; then
+                total_bytes=$((total_bytes + section_bytes[$s]))
+              else
+                missing=1
+              fi
+            done
+
+            [ $missing -eq 1 ] && continue
+            [ $total_bytes -eq 0 ] && continue
+
+            estimated=$((total_bytes / 4))
+            deviation=$(( (stated - estimated) * 100 / estimated ))
+            abs_deviation=${deviation#-}
+
+            if [ "$abs_deviation" -gt 20 ]; then
+              echo "::warning file=${skill_file}::Token estimate for [${sections}]: stated=${stated}, estimated=${estimated} (${deviation}% deviation)"
+              warnings=$((warnings + 1))
+            fi
+          done < <(sed -n '/~Tokens/,/^$/p' "$skill_file" | tail -n +3)
+
+          if [ $warnings -gt 0 ]; then
+            echo "${warnings} token estimate(s) deviate by more than 20%."
+          else
+            echo "All token estimates within 20% tolerance."
+          fi

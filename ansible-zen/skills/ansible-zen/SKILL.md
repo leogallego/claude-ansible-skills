@@ -146,3 +146,7 @@ rather than strict rule enforcement.
 6. **Top recommendations** — List the 3 most impactful changes that would
    improve the code's alignment with the Zen. Focus on changes that reduce
    complexity and improve readability.
+
+7. **Offer CoP review** — After the Zen review is complete, offer:
+   "Want me to run `/ansible-good-practices` for a complementary review
+   focused on Red Hat CoP rule compliance?"

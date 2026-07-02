@@ -331,3 +331,9 @@ fix these module usage issues?"
 - Do not auto-fix INFO-level (suggestions) unless explicitly asked
 - After fixing, re-validate the affected tasks to confirm corrections
 
+### Step 6 — Offer Zen review
+
+After the full review is complete, offer:
+"Want me to run `/ansible-zen` for a complementary review focused on
+simplicity, readability, and the Zen of Ansible principles?"
+

@@ -89,17 +89,17 @@ jobs:
       - name: Compute next version
         if: steps.detect.outputs.bump != 'none'
         id: version
+        env:
+          LATEST_TAG: ${{ steps.detect.outputs.latest_tag }}
+          BUMP: ${{ steps.detect.outputs.bump }}
         run: |
-          tag="${{ steps.detect.outputs.latest_tag }}"
-          bump="${{ steps.detect.outputs.bump }}"
-
           # Strip v prefix, split components
-          ver="${tag#v}"
+          ver="${LATEST_TAG#v}"
           major=$(echo "$ver" | cut -d. -f1)
           minor=$(echo "$ver" | cut -d. -f2)
           patch=$(echo "$ver" | cut -d. -f3)
 
-          if [ "$bump" = "minor" ]; then
+          if [ "$BUMP" = "minor" ]; then
             minor=$((minor + 1))
             patch=0
           else

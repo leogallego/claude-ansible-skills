@@ -23,7 +23,7 @@ const plugins = readdirSync('.', { withFileTypes: true })
     const description = descMatch
       ? descMatch[1].split('\n').map(l => l.trim()).filter(Boolean).join(' ')
       : frontmatter.match(/^description:\s*(.+)$/m)?.[1]?.trim()
-    const version = frontmatter.match(/^\s*version:\s*(.+)$/m)?.[1]?.trim() || '1.0.0'
+    const version = (frontmatter.match(/^\s*version:\s*(.+)$/m)?.[1]?.trim() || '1.0.0').replace(/^["']|["']$/g, '')
 
     // Generate plugin.json for each plugin
     const pluginDir = join(d.name, '.claude-plugin')

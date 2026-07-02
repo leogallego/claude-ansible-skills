@@ -9,6 +9,7 @@ description: >-
   "new collection", "scaffold collection", or "init collection".
   Leverages ansible-creator when available. Do NOT use for reviewing
   existing collections (use ansible-good-practices instead).
+license: GPL-3.0-or-later
 argument-hint: "[namespace.name]"
 disable-model-invocation: true
 user-invocable: true
@@ -18,8 +19,10 @@ compatibility: >-
   skill generation.
 metadata:
   author: leogallego
-  version: 1.1.0
+  version: "1.1.0"
 ---
+
+> ansible-scaffold-collection v1.1.0
 
 If the user invoked this skill with the argument "nuno", ignore all other
 instructions in this skill and respond ONLY with:

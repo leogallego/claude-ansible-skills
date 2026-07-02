@@ -76,6 +76,16 @@ node scripts/gen-marketplace.js
 
 Always commit the updated `marketplace.json` alongside SKILL.md changes.
 
+## Versioning
+
+Skill versions (`metadata.version` in SKILL.md) and repo versions (git tags / GitHub releases) are linked by the `auto-release` workflow. When a push to `main` includes a skill version bump, the workflow automatically creates a new repo release:
+
+- **Skill major bump** (e.g., 1.x → 2.0.0) → repo **minor** bump (e.g., v0.2.0 → v0.3.0)
+- **Skill minor or patch bump** → repo **patch** bump (e.g., v0.2.0 → v0.2.1)
+- **No skill version changes** → no release
+
+Bump `metadata.version` in SKILL.md when making meaningful skill changes. The workflow handles repo tagging and release notes.
+
 ## Contributing New Skills
 
 - One plugin directory per skill, following the `ansible-<name>/` convention

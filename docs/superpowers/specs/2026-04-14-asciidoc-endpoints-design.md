@@ -102,13 +102,13 @@ Each plugin gets only the sections it needs:
 ansible-good-practices/
   references/           -> all 7 sections
 
-ansible-scaffold-role/
+ansible-new-role/
   references/           -> roles.adoc, coding_style.adoc
 
-ansible-scaffold-collection/
+ansible-new-collection/
   references/           -> collections.adoc, roles.adoc, coding_style.adoc
 
-ansible-scaffold-ee/
+ansible-new-ee/
   references/           -> coding_style.adoc
 
 ansible-zen/
@@ -182,9 +182,9 @@ The 4 other skills' fallback sections updated to:
 | `scripts/update-cop-references.sh` | Fetches and distributes AsciiDoc sections |
 | `.github/workflows/update-cop-references.yml` | Weekly CI to keep references fresh |
 | `ansible-good-practices/references/*.adoc` (7 files) | Bundled reference sections |
-| `ansible-scaffold-role/references/*.adoc` (2 files) | Role-relevant sections |
-| `ansible-scaffold-collection/references/*.adoc` (3 files) | Collection-relevant sections |
-| `ansible-scaffold-ee/references/*.adoc` (1 file) | EE-relevant section |
+| `ansible-new-role/references/*.adoc` (2 files) | Role-relevant sections |
+| `ansible-new-collection/references/*.adoc` (3 files) | Collection-relevant sections |
+| `ansible-new-ee/references/*.adoc` (1 file) | EE-relevant section |
 | `ansible-zen/references/*.adoc` (1 file) | Zen-relevant section |
 
 ## Files Modified
@@ -193,9 +193,9 @@ The 4 other skills' fallback sections updated to:
 |---|---|
 | `ansible-good-practices/skills/ansible-good-practices/SKILL.md` | Rewritten loading logic, AsciiDoc parsing notes, remove monolithic refs |
 | `ansible-good-practices/.claude-plugin/plugin.json` | Rename |
-| `ansible-scaffold-role/skills/ansible-scaffold-role/SKILL.md` | Update fallback section |
-| `ansible-scaffold-collection/skills/ansible-scaffold-collection/SKILL.md` | Update fallback section |
-| `ansible-scaffold-ee/skills/ansible-scaffold-ee/SKILL.md` | Update fallback section |
+| `ansible-new-role/skills/ansible-new-role/SKILL.md` | Update fallback section |
+| `ansible-new-collection/skills/ansible-new-collection/SKILL.md` | Update fallback section |
+| `ansible-new-ee/skills/ansible-new-ee/SKILL.md` | Update fallback section |
 | `ansible-zen/skills/ansible-zen/SKILL.md` | Update fallback section |
 | `.claude-plugin/marketplace.json` | Update plugin entry for rename |
 | `CLAUDE.md` | Update skill list entry |

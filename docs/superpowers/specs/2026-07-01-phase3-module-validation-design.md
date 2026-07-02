@@ -29,7 +29,7 @@ to validate task parameters against actual module specifications.
 Module validation runs as a **separate pass after the CoP review and
 auto-fix cycle**, not woven into the CoP review steps. This keeps the
 optional MCP logic cleanly separated from the core review flow and matches
-the pattern used in Phase 2 (ansible-scaffold-role).
+the pattern used in Phase 2 (ansible-new-role).
 
 ### Runs after auto-fix
 

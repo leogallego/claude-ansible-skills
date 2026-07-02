@@ -16,9 +16,9 @@ Review Ansible code against Red Hat CoP automation good practices loaded from pe
 - Parallel review with subagents for large projects
 - Auto-fix offer after reporting
 
-### ansible-scaffold-role
+### ansible-new-role
 
-Scaffold a new Ansible role fully compliant with CoP rules.
+Create a new Ansible role fully compliant with CoP rules.
 
 - Interactive variable builder — asks what the role manages (packages, services, configs, users, firewall, storage) and generates realistic defaults, tasks, handlers, and templates
 - Task componentization — splits complex roles into `install.yml`, `configure.yml`, `service.yml` with sub-task name prefixes
@@ -26,20 +26,20 @@ Scaffold a new Ansible role fully compliant with CoP rules.
 - Collection-aware — uses `ansible-creator` inside collections, manual creation otherwise
 - Falls back to manual creation when `ansible-creator` is not installed
 
-### ansible-scaffold-collection
+### ansible-new-collection
 
-Scaffold a new Ansible content collection using `ansible-creator`, then customize for full CoP compliance.
+Create a new Ansible content collection using `ansible-creator`, then customize for full CoP compliance.
 
 - Plugin scaffolding — generates modules, filters, lookup, and action plugin skeletons with proper docstrings and FQCN examples
-- Delegates role creation to the full ansible-scaffold-role skill process
+- Delegates role creation to the full ansible-new-role skill process
 - CI/CD pipeline generation for GitHub Actions or GitLab CI (lint, test, build, publish)
 - Changelog setup with `antsibull-changelog`
 - Generates collection-level CLAUDE.md for future Claude Code sessions
 - Falls back to manual creation when `ansible-creator` is not installed
 
-### ansible-scaffold-ee
+### ansible-new-ee
 
-Scaffold a new Ansible execution environment project using `ansible-creator`.
+Create a new Ansible execution environment project using `ansible-creator`.
 
 - Dependency introspection — auto-detects collections, roles, Python, and system deps from existing project files
 - External dependency files — generates `requirements.yml`, `requirements.txt`, and `bindep.txt` for non-trivial EEs
@@ -90,9 +90,9 @@ Register the marketplace and install skills as plugins:
 ```
 /plugin marketplace add https://github.com/leogallego/claude-ansible-skills
 /plugin install ansible-good-practices
-/plugin install ansible-scaffold-role
-/plugin install ansible-scaffold-collection
-/plugin install ansible-scaffold-ee
+/plugin install ansible-new-role
+/plugin install ansible-new-collection
+/plugin install ansible-new-ee
 /plugin install ansible-zen
 ```
 
@@ -113,7 +113,7 @@ ln -s ~/claude-ansible-skills/ansible-good-practices/skills/ansible-good-practic
 
 ```bash
 mkdir -p ~/.claude/skills
-ln -s ~/claude-ansible-skills/ansible-scaffold-role/skills/ansible-scaffold-role ~/.claude/skills/ansible-scaffold-role
+ln -s ~/claude-ansible-skills/ansible-new-role/skills/ansible-new-role ~/.claude/skills/ansible-new-role
 ```
 
 **All skills at once** at profile level:
@@ -132,9 +132,9 @@ Once installed, invoke skills in Claude Code with their slash command:
 
 ```
 /ansible-good-practices
-/ansible-scaffold-role
-/ansible-scaffold-collection
-/ansible-scaffold-ee
+/ansible-new-role
+/ansible-new-collection
+/ansible-new-ee
 /ansible-zen
 ```
 

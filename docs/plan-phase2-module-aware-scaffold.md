@@ -1,8 +1,8 @@
-# Plan: Phase 2 — Module-aware task generation for ansible-scaffold-role
+# Plan: Phase 2 — Module-aware task generation for ansible-new-role
 
 ## Context
 
-The `ansible-scaffold-role` skill currently generates tasks using template
+The `ansible-new-role` skill currently generates tasks using template
 patterns inferred from the user's answers to "What does the role manage?"
 (packages, services, config files, etc.). The LLM guesses module parameters
 from training data, which can produce incorrect parameter names, miss required
@@ -36,8 +36,8 @@ Current flow:                         New flow:
 1. Gather inputs                      1. Gather inputs (unchanged)
 2. Scaffolding strategy               2. [NEW] Module discovery (optional)
 3. Required files and content         3. Scaffolding strategy (unchanged)
-4. Post-scaffold validation           4. Required files and content (ENHANCED)
-5. Loading reference rules            5. Post-scaffold validation (unchanged)
+4. Post-creation validation           4. Required files and content (ENHANCED)
+5. Loading reference rules            5. Post-creation validation (unchanged)
                                       6. [NEW] Companion skill offer (optional)
                                       7. Loading reference rules (unchanged, appendix)
 ```
@@ -65,12 +65,12 @@ Companion skill goes **after** validation (only offer once the role is valid).
 - The scaffolding strategy (ansible-creator vs manual)
 - The directory structure and file list
 - All CLAUDE.md rules enforcement
-- The post-scaffold validation checklist
+- The post-creation validation checklist
 - The loading reference rules section
 
 ## File to change
 
-**Single file:** `ansible-scaffold-role/skills/ansible-scaffold-role/SKILL.md`
+**Single file:** `ansible-new-role/skills/ansible-new-role/SKILL.md`
 
 No new files needed. No files deleted. No plugin.json changes (version bump
 is optional — this is an additive enhancement, not a breaking change).
@@ -158,7 +158,7 @@ stay as-is; they just benefit from richer context.
 ### Change 3: Add "Optional: Companion skill generation" section
 
 Insert a new `## Optional: Companion skill generation` section **after**
-"Post-scaffold validation" and **before** "Loading reference rules"
+"Post-creation validation" and **before** "Loading reference rules"
 (which is an appendix-style section, not a workflow step).
 
 The `generate_role_skill` MCP tool already exists in ansible-know — this
@@ -190,7 +190,7 @@ no breaking changes). Update `description` to mention module-aware generation:
 
 ```yaml
 description: >-
-  Scaffold a new Ansible role following all Red Hat CoP good practices.
+  Create a new Ansible role following all Red Hat CoP good practices.
   Use when the user wants to create, generate, or bootstrap a new Ansible
   role. Optionally uses ansible-know MCP tools for module-aware task
   generation with verified parameters. Falls back to template-based
@@ -217,7 +217,7 @@ compatibility: >-
 
 ### Test 1: With ansible-know MCP connected
 
-1. Invoke `/ansible-scaffold-role test_nginx`
+1. Invoke `/ansible-new-role test_nginx`
 2. Answer "What does the role manage?" with: packages, services, config files
 3. Verify:
    - MCP tools are called (search_modules, get_module_doc)
@@ -231,7 +231,7 @@ compatibility: >-
 ### Test 2: Without ansible-know MCP
 
 1. Temporarily disconnect ansible-know MCP server
-2. Invoke `/ansible-scaffold-role test_basic`
+2. Invoke `/ansible-new-role test_basic`
 3. Answer same questions as Test 1
 4. Verify:
    - No MCP calls attempted
@@ -241,6 +241,6 @@ compatibility: >-
 
 ### Test 3: Edge case — Custom pattern
 
-1. Invoke `/ansible-scaffold-role test_custom`
+1. Invoke `/ansible-new-role test_custom`
 2. Answer "What does the role manage?" with: Custom — "manages DNS zones"
 3. Verify the module search uses the custom description as search keywords

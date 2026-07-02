@@ -34,15 +34,29 @@ The root `.claude-plugin/marketplace.json` indexes all plugins for marketplace d
 
 ## Skill File Format
 
-Each `SKILL.md` uses YAML front matter with three required fields:
+Skills follow the [agentskills.io specification](https://agentskills.io/specification) with Claude Code-specific extensions. Each `SKILL.md` uses YAML front matter:
+
 ```yaml
 ---
-name: skill-name
-description: >-
+# --- agentskills.io spec fields ---
+name: skill-name                     # Required. Must match parent directory name.
+description: >-                      # Required. Max 1024 chars.
   Multi-line description used for skill discovery and matching.
-user-invocable: true
+license: GPL-3.0-or-later            # Optional. SPDX identifier.
+compatibility: >-                    # Optional. Max 500 chars.
+  Environment requirements (CLIs, MCP servers, etc.).
+metadata:                            # Optional. Arbitrary key-value pairs.
+  author: leogallego
+  version: "1.0.0"
+
+# --- Claude Code extensions (not in agentskills.io spec) ---
+user-invocable: true                 # Controls slash-command visibility.
+argument-hint: "[args]"              # Placeholder shown in skill picker.
+disable-model-invocation: true       # Prevents auto-invocation without explicit user request.
 ---
 ```
+
+The Claude Code extensions (`user-invocable`, `argument-hint`, `disable-model-invocation`) must remain as top-level frontmatter fields — Claude Code's skill loader reads them there. These cause warnings with the agentskills.io `skills-ref validate` tool but cannot be moved to `metadata:` without breaking Claude Code.
 
 The body is a markdown prompt that Claude Code follows when the skill is invoked.
 
@@ -66,6 +80,8 @@ Always commit the updated `marketplace.json` alongside SKILL.md changes.
 
 - One plugin directory per skill, following the `ansible-<name>/` convention
 - Each plugin must contain `.claude-plugin/plugin.json` and `skills/<skill-name>/SKILL.md`
+- SKILL.md frontmatter must include all agentskills.io required fields (`name`, `description`) plus Claude Code fields (`user-invocable`). See [Skill File Format](#skill-file-format) for the full schema.
+- The `name` field must match the parent directory name, use only lowercase letters/numbers/hyphens, and be max 64 characters
 - Skills should reference CLAUDE.md rules rather than duplicating them
 - Scaffold skills follow a gather-inputs → generate → customize → validate pattern
 - After creating a new skill, run `node scripts/gen-marketplace.js` to update the marketplace index

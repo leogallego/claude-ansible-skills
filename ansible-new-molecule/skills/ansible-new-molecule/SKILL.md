@@ -154,8 +154,11 @@ Based on systemd detection from introspection:
 | Manages services, EL only | UBI-init (no build step needed) | `registry.access.redhat.com/ubi9/ubi-init` |
 | Manages services, multi-platform | Custom Containerfile per platform | Skill generates Containerfiles |
 
-For multi-platform service roles, generate Containerfiles that install systemd.
-Set `pre_build_image: false` in the inventory so molecule-plugins builds them.
+For multi-platform service roles, generate a Containerfile per platform that
+installs systemd and use `community.docker.docker_image_build` or
+`containers.podman.podman_image` in create.yml to build the image before
+creating the container. Reference the locally-built image in the instance
+definition.
 
 ### Step 3: Detect container runtime
 

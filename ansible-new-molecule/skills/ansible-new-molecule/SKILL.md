@@ -315,7 +315,7 @@ UBI-init has `/sbin/init` as its default entrypoint, but the explicit
         tmpfs:
           /run: rw
           /tmp: rw
-        privileged: true
+        privileged: true  # Docker requires privileged for systemd cgroup access
 ```
 
 ### create.yml — Podman

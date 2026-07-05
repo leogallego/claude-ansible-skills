@@ -302,8 +302,9 @@ list from role introspection (detected image, systemd needs, etc.).
         label: "{{ item.name }}"
 ```
 
-For **systemd roles using UBI-init**, adjust the instances list — no special
-command is needed because UBI-init starts systemd by default:
+For **systemd roles using UBI-init** with Docker, adjust the instances list.
+UBI-init has `/sbin/init` as its default entrypoint, but the explicit
+`command` ensures systemd starts regardless of image entrypoint configuration:
 
 ```yaml
     instances:

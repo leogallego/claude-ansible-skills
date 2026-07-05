@@ -300,6 +300,7 @@ list from role introspection (detected image, systemd needs, etc.).
       loop: "{{ instances }}"
       loop_control:
         label: "{{ item.name }}"
+      changed_when: false
 ```
 
 For **systemd roles using UBI-init** with Docker, adjust the instances list.

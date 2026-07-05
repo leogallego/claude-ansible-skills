@@ -11,8 +11,8 @@ description: >-
   blocks), working create.yml/destroy.yml playbooks, smart verify.yml
   from role introspection, and optional GitHub Actions CI. Optionally
   uses ansible-know MCP server for module return value lookup. Do NOT
-  use for migrating existing molecule setups (use ansible-migrate-molecule
-  instead).
+  use for migrating existing molecule setups (migration skill planned
+  for a future release).
 license: GPL-3.0-or-later
 argument-hint: "[role-or-collection-path]"
 disable-model-invocation: true

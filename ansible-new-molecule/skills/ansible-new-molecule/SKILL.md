@@ -543,6 +543,10 @@ context. Role variables from `defaults/main.yml` are NOT automatically
 available. The `vars_files` directive loads them explicitly using
 `MOLECULE_PROJECT_DIRECTORY` (which molecule sets to the role root).
 
+If the role has no `defaults/main.yml` (e.g., a minimal role or one using
+only `vars/`), omit the `vars_files` directive and hardcode any needed
+values directly in the verify tasks.
+
 Use `gather_facts: true` so assertions can reference `ansible_facts` if needed.
 
 #### Step 1: Load archetype templates

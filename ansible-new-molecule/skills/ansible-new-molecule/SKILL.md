@@ -155,7 +155,16 @@ Based on systemd detection from introspection:
 | Manages services, multi-platform | Custom Containerfile per platform | Skill generates Containerfiles |
 
 For multi-platform service roles, generate a Containerfile per platform that
-installs systemd and use `community.docker.docker_image_build` or
+installs systemd. Minimal example for Debian:
+
+```dockerfile
+FROM debian:12
+RUN apt-get update && apt-get install -y systemd systemd-sysv \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+CMD ["/lib/systemd/systemd"]
+```
+
+Then use `community.docker.docker_image_build` or
 `containers.podman.podman_image` in create.yml to build the image before
 creating the container. Reference the locally-built image in the instance
 definition.

@@ -92,38 +92,20 @@ The molecule-plugins package provides bundled playbooks for Docker and Podman.
   In ansible-native mode, do NOT use this. Define instances in create.yml's
   own vars instead.
 
-### Docker and Podman patterns (from molecule-plugins bundled playbooks)
+### Historical Reference: molecule-plugins bundled playbook techniques
 
-> These describe the molecule-plugins bundled playbooks for reference. In
-> ansible-native mode, write your own create/destroy playbooks using inline
-> instance definitions rather than using the bundled playbooks with
-> `molecule_yml.platforms`. Extract the useful techniques (async execution,
-> labels, retry patterns) but define instances in your playbook's vars.
+> **Do not use these patterns directly.** These describe the molecule-plugins
+> bundled playbooks for historical context only. In ansible-native mode, write
+> your own create/destroy playbooks using inline instance definitions. The
+> useful techniques to extract are: async execution for parallel container
+> creation, `{owner: molecule}` labels for cleanup safety, and retry patterns
+> for image builds. See the SKILL.md templates for modern implementations.
 
-### Docker create.yml pattern (from molecule-plugins)
+Key techniques from bundled playbooks (extract and adapt, do not copy verbatim):
 
-- Uses `community.docker.docker_container` for container creation
-- Default command: `bash -c "while true; do sleep 10000; done"` (when `override_command: true`)
-- Supports `pre_build_image: true` to skip Dockerfile build
-- Async execution: `async: 7200, poll: 0` with `async_status` wait
-- Network management via custom filter plugin `molecule_get_docker_networks`
-- Registry login via `community.docker.docker_login`
-- Image build with retry (3 attempts, 30s delay)
-- Labels: `{owner: molecule}` for cleanup safety
-
-### Podman create.yml pattern (from molecule-plugins)
-
-- Uses `containers.podman.podman_container` for container creation
-- Default command: `["bash", "-c", "while true; do sleep 10000; done"]` (list form)
-- Native `systemd:` parameter support (Docker lacks this)
-- Rootless support: `become: "{{ not (item.rootless | default(true)) }}"`
-- Network management via `containers.podman.podman_network`
-- Extra CLI args via `cmd_args` (cgroup_manager, storage_opt, etc.)
-
-### Podman destroy.yml pattern
-
-- Uses raw `shell` command: `podman container exists <name> && podman rm -f <name> || true`
-- Network cleanup via `containers.podman.podman_network: state: absent`
+- **Docker:** async container creation (`async: 7200, poll: 0`), image build with retry (3 attempts), `{owner: molecule}` labels
+- **Podman:** native `systemd:` parameter, rootless support via conditional `become`, network management via `containers.podman.podman_network`
+- **Destroy (Podman):** shell-based removal (`podman container exists && podman rm -f || true`), network cleanup via module
 
 ## Verification: verify.yml
 

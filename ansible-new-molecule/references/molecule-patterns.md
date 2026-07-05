@@ -382,5 +382,7 @@ all:
 ```
 
 Note: debian:12 base image uses the default sleep command since it has no
-systemd. For Debian roles that need systemd, use a custom Containerfile
-with `pre_build_image: false` in the instance definition.
+systemd. For Debian roles that need systemd, build a custom image from a
+Containerfile using `containers.podman.podman_image` or
+`community.docker.docker_image_build` in create.yml before creating the
+container.

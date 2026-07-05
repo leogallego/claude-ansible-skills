@@ -866,12 +866,10 @@ Load molecule reference rules using this priority:
 1. **Bundled references** — Read from this plugin's `references/` files:
    - `molecule-philosophy.md` — distilled principles, modern config format,
      container strategy, and verification patterns
-   - `molecule-patterns.md` — real-world patterns from ansible-middleware
-     and redhat-cop (multi-node, HA, shared storage, advanced inventory).
-     Note: these patterns use the pre-ansible-native format for historical
-     context — extract the TESTING CONCEPTS (multi-node, shared storage,
-     HA clusters, etc.) but generate output using the modern ansible-native
-     format described in this skill.
+   - `molecule-patterns.md` — real-world testing patterns (multi-node, HA,
+     shared storage, advanced inventory) with reference implementations in
+     ansible-native format. Concept tables describe what to test and when;
+     reference implementations show how.
 2. **ansible-know MCP** (if `search_docs` and `fetch_doc` are available) —
    Fetch latest molecule philosophy and configuration docs:
    - `search_docs(query="molecule testing philosophy")`

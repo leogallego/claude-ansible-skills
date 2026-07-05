@@ -164,6 +164,7 @@ scenario:
       loop: "{{ instances }}"
       loop_control:
         label: "{{ item.name }}"
+      changed_when: false
 ```
 
 ```yaml

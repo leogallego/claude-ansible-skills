@@ -428,6 +428,13 @@ instead of a manual `/sbin/init` command:
 matching `name` values. The skill generates both files together, so they are
 always in sync. When adding instances later, update both files.
 
+**Note on parameter differences:** Docker and Podman modules use different
+parameter names for the same concepts. Key differences: `networks` (Docker)
+vs `network` (Podman), `volumes` vs `volume`, `capabilities` vs `cap_add`,
+`published_ports` vs `publish`, `labels` vs `label`. Instance definitions
+in create.yml are NOT interchangeable between runtimes — the skill generates
+the correct parameters for the detected runtime.
+
 ### inventory/ directory
 
 Create a `molecule/<scenario>/inventory/` directory with **connection info

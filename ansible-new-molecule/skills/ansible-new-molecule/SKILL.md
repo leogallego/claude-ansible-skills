@@ -131,14 +131,18 @@ each role, run the same introspection above. For collections, suggest:
 molecule --version
 ```
 
-If molecule is installed (>= 26.0.0), use it as the baseline:
+If molecule is installed, use it to create the scenario directory structure:
 
 ```
 molecule init scenario <scenario_name>
 ```
 
-This generates modern ansible-native stubs (no driver/provisioner/verifier/
-platforms blocks). The skill then enhances the generated stubs.
+This generates a scaffold with molecule.yml, create.yml, converge.yml,
+destroy.yml, and verify.yml. The generated molecule.yml includes a verbose
+ansible-native config (dependency, executor backends, playbook paths). The
+skill **replaces** the generated files with its own templates — the init
+command is used only to create the directory structure and scenario
+registration, not for the file content.
 
 If molecule is not installed, fall back to creating all files manually. Inform
 the user: "molecule CLI not found. Creating files manually. Install with

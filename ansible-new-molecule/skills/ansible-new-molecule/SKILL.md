@@ -189,10 +189,10 @@ molecule/
 │   ├── converge.yml
 │   ├── verify.yml
 │   ├── destroy.yml
-│   └── prepare.yml          # (optional, only if pre-convergence setup needed)
+│   ├── requirements.yml      # Galaxy dependencies for testing
+│   └── prepare.yml           # (optional, only if pre-convergence setup needed)
 ├── <additional-scenarios>/   # (if multi-scenario strategy)
 │   └── ...
-└── requirements.yml          # Galaxy dependencies for testing
 ```
 
 ### For collections — `extensions/molecule/`
@@ -206,10 +206,10 @@ extensions/
     │   ├── create.yml
     │   ├── converge.yml
     │   ├── verify.yml
-    │   └── destroy.yml
+    │   ├── destroy.yml
+    │   └── requirements.yml
     ├── <additional-scenarios>/
     │   └── ...
-    └── requirements.yml
 ```
 
 Plus optionally:
@@ -671,7 +671,9 @@ If the role has no obvious preparation needs, do NOT generate prepare.yml.
 
 ### requirements.yml
 
-Generate a requirements file for test dependencies:
+Generate a requirements file **inside each scenario directory** (e.g.,
+`molecule/default/requirements.yml`). Molecule resolves `requirements.yml`
+relative to the scenario directory, not the role root.
 
 ```yaml
 ---

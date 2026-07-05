@@ -283,14 +283,16 @@ caches) where nodes have different roles.
   tags:
     - always
   vars:
+    podman_exec: >-
+      {{ lookup('env', 'MOLECULE_PODMAN_EXECUTABLE') | default('podman', true) }}
     instances:
       - name: node1
       - name: node2
   tasks:
     - name: Destroy molecule instance(s)
       ansible.builtin.shell: >-
-        podman container exists {{ item.name }} &&
-        podman rm -f {{ item.name }} || true
+        {{ podman_exec }} container exists {{ item.name }} &&
+        {{ podman_exec }} rm -f {{ item.name }} || true
       loop: "{{ instances }}"
       loop_control:
         label: "{{ item.name }}"

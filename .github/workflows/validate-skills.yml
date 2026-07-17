@@ -128,6 +128,222 @@ jobs:
           fi
           echo "Marketplace index is up to date."
 
+      - name: Check SKILL.md line counts
+        run: |
+          errors=0
+          warnings=0
+          for skill_file in */skills/*/SKILL.md; do
+            [ -f "$skill_file" ] || continue
+            lines=$(wc -l < "$skill_file")
+            if [ "$lines" -gt 500 ]; then
+              echo "::error file=${skill_file}::SKILL.md is ${lines} lines (max 500) — move content to references/"
+              errors=$((errors + 1))
+            elif [ "$lines" -gt 400 ]; then
+              echo "::warning file=${skill_file}::SKILL.md is ${lines} lines (consider trimming, max 500)"
+              warnings=$((warnings + 1))
+            else
+              echo "  ✓ ${skill_file} (${lines} lines)"
+            fi
+          done
+
+          if [ $errors -gt 0 ]; then
+            echo "::error::Line count check failed — ${errors} skill(s) exceed 500 lines"
+            exit 1
+          fi
+          if [ $warnings -gt 0 ]; then
+            echo "${warnings} skill(s) approaching the 500-line limit."
+          else
+            echo "All SKILL.md files within line limits."
+          fi
+
+      - name: Check description quality and cross-skill overlap
+        run: |
+          errors=0
+          warnings=0
+
+          # First pass: extract descriptions and check quality
+          declare -A skill_descs
+          for skill_file in */skills/*/SKILL.md; do
+            [ -f "$skill_file" ] || continue
+            skill_name=$(echo "$skill_file" | cut -d/ -f3)
+
+            # Extract description value from frontmatter via Python
+            desc=$(python3 -c "
+          import yaml, sys
+          with open(sys.argv[1]) as f:
+              content = f.read()
+          parts = content.split('---', 2)
+          if len(parts) >= 3:
+              fm = yaml.safe_load(parts[1])
+              if fm and 'description' in fm:
+                  print(fm['description'])
+          " "$skill_file")
+
+            if [ -z "$desc" ]; then
+              echo "::error file=${skill_file}::Could not extract description"
+              errors=$((errors + 1))
+              continue
+            fi
+
+            skill_descs[$skill_name]="$desc"
+
+            # Check for negative guidance ("Do NOT" or "Do not")
+            do_not_count=$(echo "$desc" | grep -ci "do not" || true)
+            if [ "$do_not_count" -eq 0 ]; then
+              echo "::error file=${skill_file}::Description lacks 'Do NOT' clause — add negative guidance to prevent wrong triggers"
+              errors=$((errors + 1))
+            fi
+
+            # Check word count (30-150 range)
+            word_count=$(echo "$desc" | wc -w | tr -d ' ')
+            if [ "$word_count" -lt 30 ]; then
+              echo "::warning file=${skill_file}::Description is ${word_count} words (minimum 30) — too short for reliable triggering"
+              warnings=$((warnings + 1))
+            elif [ "$word_count" -gt 150 ]; then
+              echo "::warning file=${skill_file}::Description is ${word_count} words (maximum 150) — too long, adds unnecessary context cost"
+              warnings=$((warnings + 1))
+            else
+              echo "  ✓ ${skill_name}: description OK (${word_count} words, ${do_not_count} 'Do NOT' clause(s))"
+            fi
+          done
+
+          # Second pass: check for overlapping trigger phrases across skills
+          declare -A phrase_owners
+          overlap_warnings=0
+          for skill_name in "${!skill_descs[@]}"; do
+            desc="${skill_descs[$skill_name]}"
+            phrases=$(echo "$desc" | grep -oE '"[^"]+"' | tr '[:upper:]' '[:lower:]' | sort -u)
+            while IFS= read -r phrase; do
+              [ -z "$phrase" ] && continue
+              clean=$(echo "$phrase" | tr -d '"' | xargs)
+              word_count=$(echo "$clean" | wc -w)
+              [ "$word_count" -lt 2 ] && continue
+
+              if [ -n "${phrase_owners[$phrase]+x}" ]; then
+                existing="${phrase_owners[$phrase]}"
+                echo "::warning::Trigger phrase ${phrase} appears in both '${existing}' and '${skill_name}'"
+                overlap_warnings=$((overlap_warnings + 1))
+              else
+                phrase_owners[$phrase]="$skill_name"
+              fi
+            done <<< "$phrases"
+          done
+
+          if [ $overlap_warnings -gt 0 ]; then
+            echo "${overlap_warnings} overlapping trigger phrase(s) found."
+          else
+            echo "No overlapping trigger phrases detected."
+          fi
+
+          if [ $errors -gt 0 ]; then
+            echo "::error::Description quality check failed with ${errors} error(s)"
+            exit 1
+          fi
+          if [ $warnings -gt 0 ]; then
+            echo "${warnings} description warning(s)."
+          else
+            echo "All descriptions pass quality checks."
+          fi
+
+      - name: Validate YAML examples in SKILL.md
+        run: |
+          errors=0
+          checked=0
+
+          for skill_file in */skills/*/SKILL.md; do
+            [ -f "$skill_file" ] || continue
+            skill_name=$(echo "$skill_file" | cut -d/ -f3)
+
+            # Validate each YAML fenced code block individually
+            # Uses Python to: strip frontmatter, find ```yaml blocks, parse each one
+            result=$(python3 -c "
+          import sys, yaml, re
+
+          with open(sys.argv[1]) as f:
+              content = f.read()
+
+          # Strip frontmatter (first --- delimited block)
+          parts = content.split('---', 2)
+          body = parts[2] if len(parts) >= 3 else content
+
+          # Find all fenced yaml blocks
+          blocks = re.findall(r'^\`\`\`ya?ml\s*\n(.*?)^\`\`\`', body, re.MULTILINE | re.DOTALL)
+          if not blocks:
+              print('SKIP')
+              sys.exit(0)
+
+          for i, block in enumerate(blocks, 1):
+              try:
+                  list(yaml.safe_load_all(block))
+              except yaml.YAMLError as e:
+                  print(f'FAIL block {i}: {e}')
+                  sys.exit(0)
+          print(f'OK:{len(blocks)}')
+          " "$skill_file" 2>&1)
+
+            if echo "$result" | grep -q "^SKIP"; then
+              echo "  - ${skill_name}: no YAML examples (skipped)"
+            elif echo "$result" | grep -q "^OK:"; then
+              block_count=$(echo "$result" | sed 's/OK://')
+              checked=$((checked + 1))
+              echo "  ✓ ${skill_name}: ${block_count} YAML block(s) parse correctly"
+            else
+              echo "::error file=${skill_file}::YAML example parse error: ${result}"
+              errors=$((errors + 1))
+            fi
+          done
+
+          if [ $errors -gt 0 ]; then
+            echo "::error::YAML validation failed — ${errors} skill(s) have unparseable YAML examples"
+            exit 1
+          fi
+          echo "All YAML examples valid (${checked} skill(s) checked)."
+
+      - name: Detect no-op patterns
+        continue-on-error: true
+        run: |
+          warnings=0
+          noop_patterns=(
+            "ensure quality"
+            "write clean code"
+            "be thorough"
+            "pay attention to"
+            "high quality"
+            "best possible"
+            "carefully consider"
+            "think carefully"
+            "ensure accuracy"
+            "be precise"
+          )
+
+          for skill_file in */skills/*/SKILL.md; do
+            [ -f "$skill_file" ] || continue
+            skill_name=$(echo "$skill_file" | cut -d/ -f3)
+
+            # Check the body (after frontmatter) for no-op patterns
+            body=$(awk 'BEGIN{n=0} /^---$/{n++; if(n<=2) next} n>=2{print}' "$skill_file")
+            skill_hits=0
+            for pattern in "${noop_patterns[@]}"; do
+              count=$(echo "$body" | grep -ci "$pattern" || true)
+              if [ "$count" -gt 0 ]; then
+                echo "::warning file=${skill_file}::No-op pattern '${pattern}' found ${count} time(s) — consider removing fluff"
+                skill_hits=$((skill_hits + count))
+              fi
+            done
+
+            if [ $skill_hits -eq 0 ]; then
+              echo "  ✓ ${skill_name}: no no-op patterns"
+            else
+              warnings=$((warnings + skill_hits))
+            fi
+          done
+
+          if [ $warnings -gt 0 ]; then
+            echo "${warnings} no-op pattern(s) found — review and remove if not load-bearing."
+          else
+            echo "No no-op patterns detected."
+          fi
+
       - name: Check token estimates
         continue-on-error: true
         run: |

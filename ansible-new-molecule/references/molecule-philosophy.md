@@ -21,36 +21,8 @@ These are all "pre ansible-native" constructs per the official docs:
 
 ### Modern molecule.yml structure
 
-```yaml
----
-# ansible-native configuration — no driver, provisioner, verifier, or platforms blocks
-ansible:
-  executor:
-    args:
-      ansible_playbook:
-        - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/inventory/
-  cfg:
-    defaults:
-      host_key_checking: false
-      roles_path: ${MOLECULE_PROJECT_DIRECTORY}/..:${MOLECULE_PROJECT_DIRECTORY}/roles
-  env:
-    ANSIBLE_FORCE_COLOR: "true"
-
-scenario:
-  test_sequence:
-    - dependency
-    - cleanup
-    - destroy
-    - syntax
-    - create
-    - prepare
-    - converge
-    - idempotence
-    - side_effect
-    - verify
-    - cleanup
-    - destroy
-```
+See the molecule.yml template in the SKILL.md file — it is the authoritative
+reference for the modern ansible-native config format.
 
 ## Default Test Sequence
 
@@ -125,30 +97,8 @@ The default verifier is Ansible. Write verification as an Ansible playbook
 
 ## Collection-Specific Features
 
-### Scenario location
-- Roles: `molecule/` at role root
-- Collections: `extensions/molecule/` (modern pattern)
-
-### Shared state
-When `shared_state: true`, the default scenario handles create/destroy for all
-scenarios. Other scenarios skip their own create/destroy and use shared resources.
-
-### Nested scenarios
-Collections can organize scenarios hierarchically:
-```
-extensions/molecule/
-├── config.yml
-├── default/
-│   └── molecule.yml
-├── module_a/
-│   ├── merged/
-│   │   └── molecule.yml
-│   └── deleted/
-│       └── molecule.yml
-```
-
-Target with: `molecule test -s module_a/merged` or `molecule test -s "module_a/*"`
-Discover with: `MOLECULE_GLOB="extensions/molecule/**/molecule.yml"`
+See `collection-features.md` for full details on nested scenarios, shared
+config, and shared state patterns.
 
 ## Container Image Strategy
 

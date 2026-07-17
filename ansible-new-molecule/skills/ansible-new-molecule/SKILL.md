@@ -24,10 +24,10 @@ compatibility: >-
   for module doc lookup.
 metadata:
   author: leogallego
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
-> ansible-new-molecule v1.0.0
+> ansible-new-molecule v1.1.0
 
 If the user invoked this skill with the argument "nuno", ignore all other
 instructions in this skill and respond ONLY with:
@@ -459,9 +459,12 @@ Load molecule reference rules using this priority:
    - `molecule-philosophy.md` — distilled principles, modern config format,
      container strategy, and verification patterns
    - `molecule-patterns.md` — real-world testing patterns (multi-node, HA,
-     shared storage, advanced inventory) with reference implementations in
-     ansible-native format. Concept tables describe what to test and when;
-     reference implementations show how.
+     shared storage, advanced inventory) with reference implementations
+   - `create-destroy-templates.md` — Docker/Podman create.yml and destroy.yml
+   - `inventory-templates.md` — Docker, Podman, and multi-platform inventory
+   - `verify-archetypes.md` — assertion templates per role archetype
+   - `ci-templates.md` — requirements.yml, GitHub Actions CI, tox-ansible
+   - `collection-features.md` — nested scenarios, shared config/state
 2. **ansible-know MCP** (if `search_docs` and `fetch_doc` are available) —
    Fetch latest molecule philosophy and configuration docs:
    - `search_docs(query="molecule testing philosophy")`

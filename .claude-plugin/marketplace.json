@@ -25,7 +25,7 @@
     {
       "name": "ansible-good-practices",
       "source": "./ansible-good-practices",
-      "description": "Review Ansible code against Red Hat CoP automation good practices. Use when the user wants to audit, lint, review, check, or validate Ansible roles, playbooks, collections, or inventory for compliance with CoP rules. Optionally validates module parameters against official docs via ansible-know MCP. Use when user says \"lint my role\", \"check my playbook\", \"review best practices\", or \"audit my Ansible code\". Do NOT use for general Python or YAML linting unrelated to Ansible.",
+      "description": "Review Ansible code against Red Hat CoP automation good practices. Use when the user wants to audit, lint, review, check, or validate Ansible roles, playbooks, collections, or inventory for compliance with CoP rules. Optionally validates module parameters against official docs via ansible-know MCP. Use when user says \"lint my role\", \"check my playbook\", \"review best practices\", or \"audit my Ansible code\". Do NOT use for general Python or YAML linting unrelated to Ansible. Do NOT use for answering Ansible module usage questions or checking syntax against official Ansible documentation (use ansible-docs instead).",
       "version": "2.2.0",
       "author": {
         "name": "Leo Gallego",
@@ -55,7 +55,7 @@
     {
       "name": "ansible-new-ee",
       "source": "./ansible-new-ee",
-      "description": "Create a new Ansible execution environment project following good practices. Optionally uses ansible-know MCP tools to validate collection dependencies on Galaxy and pin latest versions. Use when the user wants to create, generate, or bootstrap a new EE. Use when user says \"create an EE\", \"new execution environment\", \"scaffold EE\", or \"build EE project\". Leverages ansible-creator when available. Do NOT use for building existing EEs or managing containers.",
+      "description": "Create a new Ansible execution environment project following good practices. Optionally uses ansible-know MCP tools to validate collection dependencies on Galaxy and pin latest versions. Use when the user wants to create, generate, or bootstrap a new EE. Use when user says \"create an EE\", \"new execution environment\", \"scaffold EE\", or \"build EE project\". Leverages ansible-creator when available. Do NOT use for building existing EEs or managing containers. Do NOT use for reviewing existing EEs (use ansible-good-practices instead).",
       "version": "2.0.0",
       "author": {
         "name": "Leo Gallego",
@@ -85,7 +85,7 @@
     {
       "name": "ansible-new-role",
       "source": "./ansible-new-role",
-      "description": "Create a new Ansible role following all Red Hat CoP good practices. Use when the user wants to create, generate, or bootstrap a new Ansible role. Use when user says \"create a role\", \"new role\", \"scaffold role\", or \"generate role skeleton\". Optionally uses ansible-know MCP tools for module-aware task generation with verified parameters. Falls back to template-based generation when MCP is unavailable. Leverages ansible-creator when available. Do NOT use for reviewing existing roles (use ansible-good-practices instead).",
+      "description": "Create a new Ansible role following all Red Hat CoP good practices. Use when the user wants to create, generate, or bootstrap a new Ansible role. Use when user says \"create a role\", \"new role\", \"scaffold role\", or \"generate role skeleton\". Optionally uses ansible-know MCP tools for module-aware task generation with verified parameters. Falls back to template-based generation when MCP is unavailable. Leverages ansible-creator when available. Do NOT use for reviewing existing roles (use ansible-good-practices instead). Do NOT use for creating collections (use ansible-new-collection) or adding molecule tests to existing roles (use ansible-new-molecule).",
       "version": "2.0.0",
       "author": {
         "name": "Leo Gallego",
@@ -100,7 +100,7 @@
     {
       "name": "ansible-zen",
       "source": "./ansible-zen",
-      "description": "Display the Zen of Ansible principles and review Ansible code against them. Use when the user wants to see the Zen of Ansible, get philosophical guidance on their automation approach, or review code for simplicity, readability, and clarity. Use when user says \"zen of ansible\", \"simplify my playbook\", \"is this too complex\", or \"clean code review\". Do NOT use for strict rule compliance (use ansible-good-practices instead).",
+      "description": "Display the Zen of Ansible principles and review Ansible code against them. Use when the user wants to see the Zen of Ansible, get philosophical guidance on their automation approach, or review code for simplicity, readability, and clarity. Use when user says \"zen of ansible\", \"simplify my playbook\", \"is this too complex\", or \"clean code review\". Do NOT use for strict rule compliance (use ansible-good-practices instead). Do NOT use for Ansible module reference or documentation lookups (use ansible-docs instead).",
       "version": "1.0.0",
       "author": {
         "name": "Leo Gallego",

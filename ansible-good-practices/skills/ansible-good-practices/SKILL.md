@@ -8,7 +8,9 @@ description: >-
   official docs via ansible-know MCP. Use when user says "lint my
   role", "check my playbook", "review best practices", or "audit my
   Ansible code". Do NOT use for general Python or YAML linting
-  unrelated to Ansible.
+  unrelated to Ansible. Do NOT use for answering Ansible module usage
+  questions or checking syntax against official Ansible documentation
+  (use ansible-docs instead).
 license: GPL-3.0-or-later
 argument-hint: "[path or files] [--ref <tag-or-sha>]"
 user-invocable: true

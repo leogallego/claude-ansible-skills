@@ -56,6 +56,17 @@ Answer Ansible questions and review code against official Ansible ecosystem docu
 - Requires the [`ansible-know` MCP server](https://github.com/leogallego/ansible-know-mcp) (v0.7.0+) — install with `uvx ansible-know-mcp`
 - Complements ansible-good-practices (official docs vs CoP rules)
 
+### ansible-new-molecule
+
+Scaffold molecule testing for an Ansible role or collection following the current molecule testing philosophy (Ansible-native everything).
+
+- Modern molecule.yml — no driver/provisioner/verifier/platforms blocks (Ansible-native defaults)
+- Self-contained create.yml/destroy.yml playbooks for Docker or Podman with systemd-aware container strategy
+- Smart verify.yml generated from role archetype detection (service, package, config, etc.)
+- Optional GitHub Actions CI workflow generation
+- Collection support — nested scenarios, shared state, tox-ansible integration
+- Can be called standalone or invoked by ansible-new-role/ansible-new-collection during scaffolding
+
 ### ansible-zen
 
 Display the Zen of Ansible and review code against its 20 principles.
@@ -93,6 +104,8 @@ Register the marketplace and install skills as plugins:
 /plugin install ansible-new-role
 /plugin install ansible-new-collection
 /plugin install ansible-new-ee
+/plugin install ansible-new-molecule
+/plugin install ansible-docs
 /plugin install ansible-zen
 ```
 
@@ -135,14 +148,17 @@ Once installed, invoke skills in Claude Code with their slash command:
 /ansible-new-role
 /ansible-new-collection
 /ansible-new-ee
+/ansible-new-molecule
+/ansible-docs
 /ansible-zen
 ```
 
 ## Dependencies
 
-- **ansible-know MCP server** — required by the ansible-docs skill for documentation discovery and retrieval (install with `uvx ansible-know-mcp` or `claude mcp add ansible-know -- uvx ansible-know-mcp`)
+- **ansible-know MCP server** — required by ansible-docs, optionally used by ansible-new-molecule and scaffold skills for module doc lookup (install with `uvx ansible-know-mcp` or `claude mcp add ansible-know -- uvx ansible-know-mcp`)
 - **ansible-creator** — used by scaffold skills to generate base skeletons (optional — skills fall back to manual creation)
 - **ansible-lint** — used by the review skill for cross-referencing (optional)
+- **molecule** — used by ansible-new-molecule for testing scaffolding (optional — skill falls back to manual creation)
 - **CoP rules** — skills load rules from bundled `references/*.adoc` files (per-section AsciiDoc from [redhat-cop/automation-good-practices](https://github.com/redhat-cop/automation-good-practices)), with GitHub fetch as fallback and CLAUDE.md as last resort
 
 ## Contributing

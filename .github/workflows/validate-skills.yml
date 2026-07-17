@@ -156,34 +156,36 @@ jobs:
             echo "All SKILL.md files within line limits."
           fi
 
-      - name: Check description quality
+      - name: Check description quality and cross-skill overlap
         run: |
           errors=0
           warnings=0
 
+          # First pass: extract descriptions and check quality
+          declare -A skill_descs
           for skill_file in */skills/*/SKILL.md; do
             [ -f "$skill_file" ] || continue
             skill_name=$(echo "$skill_file" | cut -d/ -f3)
 
-            # Extract description value from frontmatter
-            # Handles both single-line and multi-line (>- folded) descriptions
+            # Extract description value from frontmatter via Python
             desc=$(python3 -c "
           import yaml, sys
-          with open('$skill_file') as f:
+          with open(sys.argv[1]) as f:
               content = f.read()
-          # Extract frontmatter between --- markers
           parts = content.split('---', 2)
           if len(parts) >= 3:
               fm = yaml.safe_load(parts[1])
               if fm and 'description' in fm:
                   print(fm['description'])
-          ")
+          " "$skill_file")
 
             if [ -z "$desc" ]; then
               echo "::error file=${skill_file}::Could not extract description"
               errors=$((errors + 1))
               continue
             fi
+
+            skill_descs[$skill_name]="$desc"
 
             # Check for negative guidance ("Do NOT" or "Do not")
             do_not_count=$(echo "$desc" | grep -ci "do not" || true)
@@ -205,6 +207,34 @@ jobs:
             fi
           done
 
+          # Second pass: check for overlapping trigger phrases across skills
+          declare -A phrase_owners
+          overlap_warnings=0
+          for skill_name in "${!skill_descs[@]}"; do
+            desc="${skill_descs[$skill_name]}"
+            phrases=$(echo "$desc" | grep -oE '"[^"]+"' | tr '[:upper:]' '[:lower:]' | sort -u)
+            while IFS= read -r phrase; do
+              [ -z "$phrase" ] && continue
+              clean=$(echo "$phrase" | tr -d '"' | xargs)
+              word_count=$(echo "$clean" | wc -w)
+              [ "$word_count" -lt 2 ] && continue
+
+              if [ -n "${phrase_owners[$phrase]+x}" ]; then
+                existing="${phrase_owners[$phrase]}"
+                echo "::warning::Trigger phrase ${phrase} appears in both '${existing}' and '${skill_name}'"
+                overlap_warnings=$((overlap_warnings + 1))
+              else
+                phrase_owners[$phrase]="$skill_name"
+              fi
+            done <<< "$phrases"
+          done
+
+          if [ $overlap_warnings -gt 0 ]; then
+            echo "${overlap_warnings} overlapping trigger phrase(s) found."
+          else
+            echo "No overlapping trigger phrases detected."
+          fi
+
           if [ $errors -gt 0 ]; then
             echo "::error::Description quality check failed with ${errors} error(s)"
             exit 1
@@ -224,29 +254,39 @@ jobs:
             [ -f "$skill_file" ] || continue
             skill_name=$(echo "$skill_file" | cut -d/ -f3)
 
-            # Extract YAML fenced code blocks from the body (after frontmatter)
-            # Skip the frontmatter, then find ```yaml ... ``` blocks
-            body=$(awk 'BEGIN{n=0} /^---$/{n++; if(n<=2) next} n>=2{print}' "$skill_file")
-            yaml_blocks=$(echo "$body" | sed -n '/^```ya\?ml$/,/^```$/{ /^```/d; p }')
+            # Validate each YAML fenced code block individually
+            # Uses Python to: strip frontmatter, find ```yaml blocks, parse each one
+            result=$(python3 -c "
+          import sys, yaml, re
 
-            if [ -z "$yaml_blocks" ]; then
+          with open(sys.argv[1]) as f:
+              content = f.read()
+
+          # Strip frontmatter (first --- delimited block)
+          parts = content.split('---', 2)
+          body = parts[2] if len(parts) >= 3 else content
+
+          # Find all fenced yaml blocks
+          blocks = re.findall(r'^\`\`\`ya?ml\s*\n(.*?)^\`\`\`', body, re.MULTILINE | re.DOTALL)
+          if not blocks:
+              print('SKIP')
+              sys.exit(0)
+
+          for i, block in enumerate(blocks, 1):
+              try:
+                  list(yaml.safe_load_all(block))
+              except yaml.YAMLError as e:
+                  print(f'FAIL block {i}: {e}')
+                  sys.exit(0)
+          print(f'OK:{len(blocks)}')
+          " "$skill_file" 2>&1)
+
+            if echo "$result" | grep -q "^SKIP"; then
               echo "  - ${skill_name}: no YAML examples (skipped)"
-              continue
-            fi
-
-            result=$(echo "$yaml_blocks" | python3 -c "
-          import sys, yaml
-          content = sys.stdin.read()
-          try:
-              list(yaml.safe_load_all(content))
-              print('OK')
-          except yaml.YAMLError as e:
-              print(f'FAIL: {e}')
-          " 2>&1)
-
-            if echo "$result" | grep -q "^OK"; then
+            elif echo "$result" | grep -q "^OK:"; then
+              block_count=$(echo "$result" | sed 's/OK://')
               checked=$((checked + 1))
-              echo "  ✓ ${skill_name}: YAML examples parse correctly"
+              echo "  ✓ ${skill_name}: ${block_count} YAML block(s) parse correctly"
             else
               echo "::error file=${skill_file}::YAML example parse error: ${result}"
               errors=$((errors + 1))
@@ -258,53 +298,6 @@ jobs:
             exit 1
           fi
           echo "All YAML examples valid (${checked} skill(s) checked)."
-
-      - name: Check cross-skill description overlap
-        continue-on-error: true
-        run: |
-          warnings=0
-
-          # Extract quoted trigger phrases from each skill's description
-          declare -A phrase_owners
-          for skill_file in */skills/*/SKILL.md; do
-            [ -f "$skill_file" ] || continue
-            skill_name=$(echo "$skill_file" | cut -d/ -f3)
-
-            desc=$(python3 -c "
-          import yaml, sys
-          with open('$skill_file') as f:
-              content = f.read()
-          parts = content.split('---', 2)
-          if len(parts) >= 3:
-              fm = yaml.safe_load(parts[1])
-              if fm and 'description' in fm:
-                  print(fm['description'])
-          ")
-
-            # Extract quoted trigger phrases (e.g., "lint my role")
-            phrases=$(echo "$desc" | grep -oP '"[^"]+"' | tr '[:upper:]' '[:lower:]' | sort -u)
-            while IFS= read -r phrase; do
-              [ -z "$phrase" ] && continue
-              # Skip short connector phrases
-              clean=$(echo "$phrase" | tr -d '"' | xargs)
-              word_count=$(echo "$clean" | wc -w)
-              [ "$word_count" -lt 2 ] && continue
-
-              if [ -n "${phrase_owners[$phrase]+x}" ]; then
-                existing="${phrase_owners[$phrase]}"
-                echo "::warning::Trigger phrase ${phrase} appears in both '${existing}' and '${skill_name}'"
-                warnings=$((warnings + 1))
-              else
-                phrase_owners[$phrase]="$skill_name"
-              fi
-            done <<< "$phrases"
-          done
-
-          if [ $warnings -gt 0 ]; then
-            echo "${warnings} overlapping trigger phrase(s) found — consider differentiating descriptions."
-          else
-            echo "No overlapping trigger phrases detected."
-          fi
 
       - name: Detect no-op patterns
         continue-on-error: true

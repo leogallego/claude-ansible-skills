@@ -226,7 +226,7 @@ jobs:
 
             # Extract YAML fenced code blocks from the body (after frontmatter)
             # Skip the frontmatter, then find ```yaml ... ``` blocks
-            body=$(sed -n '/^---$/,/^---$/d; p' "$skill_file")
+            body=$(awk 'BEGIN{n=0} /^---$/{n++; if(n<=2) next} n>=2{print}' "$skill_file")
             yaml_blocks=$(echo "$body" | sed -n '/^```ya\?ml$/,/^```$/{ /^```/d; p }')
 
             if [ -z "$yaml_blocks" ]; then
@@ -328,7 +328,7 @@ jobs:
             skill_name=$(echo "$skill_file" | cut -d/ -f3)
 
             # Check the body (after frontmatter) for no-op patterns
-            body=$(sed -n '/^---$/,/^---$/d; p' "$skill_file")
+            body=$(awk 'BEGIN{n=0} /^---$/{n++; if(n<=2) next} n>=2{print}' "$skill_file")
             skill_hits=0
             for pattern in "${noop_patterns[@]}"; do
               count=$(echo "$body" | grep -ci "$pattern" || true)

@@ -1,7 +1,7 @@
 # Plan: Skill Evaluation Framework
 
-**Status:** In progress — immediate fixes applied, CI checks and trigger cases pending
-**Issue:** TBD
+**Status:** In progress — Phase 0+1 done, trigger cases pending
+**Issue:** #47
 **Date:** 2026-07-16 (updated 2026-07-17)
 **Context:** Based on Phillip's talk (Google DeepMind) on skill evals, SkillsBench 1.1 findings, and project needs
 
@@ -213,16 +213,18 @@ ansible-new-collection ──excludes──► ansible-good-practices (review ex
 
 Applied negative guidance and delegation fixes to 4 skills. Simulated 30 prompts to verify routing.
 
-### Phase 1: CI checks (Tier 1)
+### Phase 1: CI checks (Tier 1) (DONE)
 
 **Effort:** ~half a session
-**Output:** Extended `validate-skills.yml` with new checks
+**Output:** Extended `validate-skills.yml` with 6 new checks
 
-1. Add line count check (fail >500, warn >400)
-2. Add description quality checks (negative guidance present, word count in range)
-3. Add YAML example validation (extract fenced YAML, parse with Python)
-4. Add cross-skill description overlap detection (warning-only)
-5. Fix `ansible-new-molecule` to pass the line count gate (separate PR)
+1. Line count check (fail >500, warn >400) ✓
+2. Description negative guidance (fail if no "Do NOT" clause) ✓
+3. Description word count (warn outside 30-150 words) ✓
+4. YAML example validation (extract fenced YAML, parse with Python) ✓
+5. Cross-skill description overlap detection (warning-only) ✓
+6. No-op pattern detection (warning-only) ✓
+7. Fix `ansible-new-molecule` to pass the line count gate (done in PR #50)
 
 ### Phase 2: Trigger test cases + local runner (Tier 2)
 

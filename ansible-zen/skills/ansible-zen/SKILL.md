@@ -14,7 +14,7 @@ argument-hint: "[path or files]"
 user-invocable: true
 metadata:
   author: leogallego
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 > ansible-zen v1.0.0

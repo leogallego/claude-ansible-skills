@@ -19,7 +19,7 @@ compatibility: >-
   skill generation.
 metadata:
   author: leogallego
-  version: "2.0.0"
+  version: "2.0.1"
 ---
 
 > ansible-new-collection v2.0.0

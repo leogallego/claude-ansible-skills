@@ -1,5 +1,5 @@
 {
   "name": "ansible-zen",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Display the Zen of Ansible principles and review Ansible code against them. Use when the user wants to see the Zen of Ansible, get philosophical guidance on their automation approach, or review code for simplicity, readability, and clarity. Use when user says \"zen of ansible\", \"simplify my playbook\", \"is this too complex\", or \"clean code review\". Do NOT use for strict rule compliance (use ansible-good-practices instead). Do NOT use for Ansible module reference or documentation lookups (use ansible-docs instead)."
 }

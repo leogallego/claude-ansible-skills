@@ -7,7 +7,8 @@ description: >-
   the user wants to create, generate, or bootstrap a new EE. Use when
   user says "create an EE", "new execution environment", "scaffold EE",
   or "build EE project". Leverages ansible-creator when available. Do
-  NOT use for building existing EEs or managing containers.
+  NOT use for building existing EEs or managing containers. Do NOT
+  use for reviewing existing EEs (use ansible-good-practices instead).
 license: GPL-3.0-or-later
 argument-hint: "[ee-name]"
 disable-model-invocation: true
@@ -18,7 +19,7 @@ compatibility: >-
   version pinning.
 metadata:
   author: leogallego
-  version: "2.0.0"
+  version: "2.0.1"
 ---
 
 > ansible-new-ee v2.0.0

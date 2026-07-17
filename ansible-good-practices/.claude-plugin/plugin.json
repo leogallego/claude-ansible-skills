@@ -1,5 +1,5 @@
 {
   "name": "ansible-good-practices",
-  "version": "2.2.0",
-  "description": "Review Ansible code against Red Hat CoP automation good practices. Use when the user wants to audit, lint, review, check, or validate Ansible roles, playbooks, collections, or inventory for compliance with CoP rules. Optionally validates module parameters against official docs via ansible-know MCP. Use when user says \"lint my role\", \"check my playbook\", \"review best practices\", or \"audit my Ansible code\". Do NOT use for general Python or YAML linting unrelated to Ansible."
+  "version": "2.2.1",
+  "description": "Review Ansible code against Red Hat CoP automation good practices. Use when the user wants to audit, lint, review, check, or validate Ansible roles, playbooks, collections, or inventory for compliance with CoP rules. Optionally validates module parameters via ansible-know MCP. Use when user says \"lint my role\", \"check my playbook\", \"review best practices\", or \"audit my Ansible code\". Do NOT use for general Python or YAML linting unrelated to Ansible. Do NOT use for answering Ansible module usage questions or checking syntax against official Ansible documentation (use ansible-docs instead)."
 }

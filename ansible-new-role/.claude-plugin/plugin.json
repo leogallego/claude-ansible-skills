@@ -1,5 +1,5 @@
 {
   "name": "ansible-new-role",
-  "version": "2.0.0",
-  "description": "Create a new Ansible role following all Red Hat CoP good practices. Use when the user wants to create, generate, or bootstrap a new Ansible role. Use when user says \"create a role\", \"new role\", \"scaffold role\", or \"generate role skeleton\". Optionally uses ansible-know MCP tools for module-aware task generation with verified parameters. Falls back to template-based generation when MCP is unavailable. Leverages ansible-creator when available. Do NOT use for reviewing existing roles (use ansible-good-practices instead)."
+  "version": "2.0.1",
+  "description": "Create a new Ansible role following all Red Hat CoP good practices. Use when the user wants to create, generate, or bootstrap a new Ansible role. Use when user says \"create a role\", \"new role\", \"scaffold role\", or \"generate role skeleton\". Optionally uses ansible-know MCP tools for module-aware task generation with verified parameters. Falls back to template-based generation when MCP is unavailable. Leverages ansible-creator when available. Do NOT use for reviewing existing roles (use ansible-good-practices instead). Do NOT use for creating collections (use ansible-new-collection) or adding molecule tests to existing roles (use ansible-new-molecule)."
 }

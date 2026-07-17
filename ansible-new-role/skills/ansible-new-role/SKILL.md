@@ -8,7 +8,9 @@ description: >-
   module-aware task generation with verified parameters. Falls back to
   template-based generation when MCP is unavailable. Leverages
   ansible-creator when available. Do NOT use for reviewing existing roles
-  (use ansible-good-practices instead).
+  (use ansible-good-practices instead). Do NOT use for creating
+  collections (use ansible-new-collection) or adding molecule tests
+  to existing roles (use ansible-new-molecule).
 license: GPL-3.0-or-later
 argument-hint: "[role-name]"
 disable-model-invocation: true
@@ -18,7 +20,7 @@ compatibility: >-
   Optionally uses ansible-know MCP server for module-aware task generation.
 metadata:
   author: leogallego
-  version: "2.0.0"
+  version: "2.0.1"
 ---
 
 > ansible-new-role v2.0.0
@@ -276,3 +278,7 @@ Load CoP reference rules using this priority:
 
 CLAUDE.md rules take precedence when present. AsciiDoc provides full context
 and examples.
+
+## After scaffolding
+
+Once the role is created and validated, offer: "Want me to run `/ansible-new-molecule` to add molecule tests to this role?"

@@ -7,12 +7,14 @@ description: >-
   readability, and clarity. Use when user says "zen of ansible", "simplify
   my playbook", "is this too complex", or "clean code review". Do NOT use
   for strict rule compliance (use ansible-good-practices instead).
+  Do NOT use for Ansible module reference or documentation lookups
+  (use ansible-docs instead).
 license: GPL-3.0-or-later
 argument-hint: "[path or files]"
 user-invocable: true
 metadata:
   author: leogallego
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 > ansible-zen v1.0.0

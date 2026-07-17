@@ -19,7 +19,7 @@ compatibility: >-
   skill generation.
 metadata:
   author: leogallego
-  version: "2.0.0"
+  version: "2.0.1"
 ---
 
 > ansible-new-collection v2.0.0
@@ -346,3 +346,7 @@ Load CoP reference rules using this priority:
 
 CLAUDE.md rules take precedence when present. AsciiDoc provides full context
 and examples.
+
+## After scaffolding
+
+Once the collection is created and validated, offer: "Want me to run `/ansible-new-molecule` to add molecule tests to the roles in this collection?"

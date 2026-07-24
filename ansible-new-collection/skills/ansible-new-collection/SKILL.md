@@ -11,7 +11,6 @@ description: >-
   existing collections (use ansible-good-practices instead).
 license: GPL-3.0-or-later
 argument-hint: "[namespace.name]"
-disable-model-invocation: true
 user-invocable: true
 compatibility: >-
   Requires ansible-creator CLI (optional, falls back to manual creation).

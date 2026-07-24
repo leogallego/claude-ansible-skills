@@ -13,7 +13,6 @@ description: >-
   to existing roles (use ansible-new-molecule).
 license: GPL-3.0-or-later
 argument-hint: "[role-name]"
-disable-model-invocation: true
 user-invocable: true
 compatibility: >-
   Requires ansible-creator CLI (optional, falls back to manual creation).

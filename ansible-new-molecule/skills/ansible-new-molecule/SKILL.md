@@ -15,7 +15,6 @@ description: >-
   for a future release).
 license: GPL-3.0-or-later
 argument-hint: "[role-or-collection-path]"
-disable-model-invocation: true
 user-invocable: true
 compatibility: >-
   Requires molecule CLI (optional, falls back to manual creation).

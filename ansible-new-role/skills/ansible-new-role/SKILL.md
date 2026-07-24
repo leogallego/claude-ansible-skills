@@ -19,7 +19,7 @@ compatibility: >-
   Optionally uses ansible-know MCP server for module-aware task generation.
 metadata:
   author: leogallego
-  version: "2.0.1"
+  version: "2.0.2"
 ---
 
 > ansible-new-role v2.0.0

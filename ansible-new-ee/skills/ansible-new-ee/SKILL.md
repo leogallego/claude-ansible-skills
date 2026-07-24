@@ -18,7 +18,7 @@ compatibility: >-
   version pinning.
 metadata:
   author: leogallego
-  version: "2.0.1"
+  version: "2.0.2"
 ---
 
 > ansible-new-ee v2.0.0

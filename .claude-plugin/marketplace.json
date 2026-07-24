@@ -41,7 +41,7 @@
       "name": "ansible-new-collection",
       "source": "./ansible-new-collection",
       "description": "Create a new Ansible content collection following all Red Hat CoP good practices. Optionally uses ansible-know MCP tools to discover existing collections on Galaxy and inspect reference collections before scaffolding. Use when the user wants to create, generate, or bootstrap a new Ansible collection. Use when user says \"create a collection\", \"new collection\", \"scaffold collection\", or \"init collection\". Leverages ansible-creator when available. Do NOT use for reviewing existing collections (use ansible-good-practices instead).",
-      "version": "2.0.1",
+      "version": "2.0.2",
       "author": {
         "name": "Leo Gallego",
         "email": "leogallego@gmail.com"
@@ -56,7 +56,7 @@
       "name": "ansible-new-ee",
       "source": "./ansible-new-ee",
       "description": "Create a new Ansible execution environment project following good practices. Optionally uses ansible-know MCP tools to validate collection dependencies on Galaxy and pin latest versions. Use when the user wants to create, generate, or bootstrap a new EE. Use when user says \"create an EE\", \"new execution environment\", \"scaffold EE\", or \"build EE project\". Leverages ansible-creator when available. Do NOT use for building existing EEs or managing containers. Do NOT use for reviewing existing EEs (use ansible-good-practices instead).",
-      "version": "2.0.1",
+      "version": "2.0.2",
       "author": {
         "name": "Leo Gallego",
         "email": "leogallego@gmail.com"
@@ -71,7 +71,7 @@
       "name": "ansible-new-molecule",
       "source": "./ansible-new-molecule",
       "description": "Scaffold molecule testing for an Ansible role or collection following the current molecule testing philosophy (Ansible-native everything). Use when the user wants to add molecule tests, create test scenarios, or set up molecule for an existing role or collection. Use when user says \"add molecule\", \"create molecule tests\", \"scaffold testing\", \"add test scenarios\", or \"set up molecule\". Generates modern ansible-native molecule.yml (no driver/provisioner/verifier/platforms blocks), working create.yml/destroy.yml playbooks, smart verify.yml from role introspection, and optional GitHub Actions CI. Optionally uses ansible-know MCP server for module return value lookup. Do NOT use for migrating existing molecule setups (migration skill planned for a future release).",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "author": {
         "name": "Leo Gallego",
         "email": "leogallego@gmail.com"
@@ -86,7 +86,7 @@
       "name": "ansible-new-role",
       "source": "./ansible-new-role",
       "description": "Create a new Ansible role following all Red Hat CoP good practices. Use when the user wants to create, generate, or bootstrap a new Ansible role. Use when user says \"create a role\", \"new role\", \"scaffold role\", or \"generate role skeleton\". Optionally uses ansible-know MCP tools for module-aware task generation with verified parameters. Falls back to template-based generation when MCP is unavailable. Leverages ansible-creator when available. Do NOT use for reviewing existing roles (use ansible-good-practices instead). Do NOT use for creating collections (use ansible-new-collection) or adding molecule tests to existing roles (use ansible-new-molecule).",
-      "version": "2.0.1",
+      "version": "2.0.2",
       "author": {
         "name": "Leo Gallego",
         "email": "leogallego@gmail.com"

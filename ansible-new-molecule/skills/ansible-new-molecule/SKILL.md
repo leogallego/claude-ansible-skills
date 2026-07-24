@@ -23,7 +23,7 @@ compatibility: >-
   for module doc lookup.
 metadata:
   author: leogallego
-  version: "1.1.0"
+  version: "1.1.1"
 ---
 
 > ansible-new-molecule v1.1.0

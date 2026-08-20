@@ -1,0 +1,17 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ansible-new-ee",
+  "version": "2.0.2",
+  "description": "Create a new Ansible execution environment project following good practices.",
+  "author": {
+    "name": "leogallego"
+  },
+  "license": "GPL-3.0-or-later",
+  "keywords": [
+    "ansible",
+    "ansible-new-ee",
+    "execution-environment",
+    "scaffold",
+    "automation"
+  ]
+}

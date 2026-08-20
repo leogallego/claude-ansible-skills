@@ -1,0 +1,17 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ansible-good-practices",
+  "version": "2.2.1",
+  "description": "Review Ansible code against Red Hat CoP automation good practices.",
+  "author": {
+    "name": "leogallego"
+  },
+  "license": "GPL-3.0-or-later",
+  "keywords": [
+    "ansible",
+    "ansible-good-practices",
+    "good-practices",
+    "automation",
+    "review"
+  ]
+}

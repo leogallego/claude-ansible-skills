@@ -1,0 +1,17 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ansible-docs",
+  "version": "2.0.0",
+  "description": "Answer Ansible questions and review Ansible code using official documentation from the Ansible ecosystem.",
+  "author": {
+    "name": "leogallego"
+  },
+  "license": "GPL-3.0-or-later",
+  "keywords": [
+    "ansible",
+    "ansible-docs",
+    "documentation",
+    "docs",
+    "review"
+  ]
+}

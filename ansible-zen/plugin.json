@@ -1,0 +1,17 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ansible-zen",
+  "version": "1.0.1",
+  "description": "Display the Zen of Ansible principles and review Ansible code against them.",
+  "author": {
+    "name": "leogallego"
+  },
+  "license": "GPL-3.0-or-later",
+  "keywords": [
+    "ansible",
+    "ansible-zen",
+    "zen",
+    "principles",
+    "review"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ansible-new-role",
+  "version": "2.0.2",
+  "description": "Create a new Ansible role following all Red Hat CoP good practices.",
+  "author": {
+    "name": "leogallego"
+  },
+  "license": "GPL-3.0-or-later",
+  "keywords": [
+    "ansible",
+    "ansible-new-role",
+    "role",
+    "scaffold",
+    "automation"
+  ]
+}

@@ -2,6 +2,8 @@
 
 A collection of [Claude Code](https://claude.ai/code) skills for Ansible automation development following [Red Hat Communities of Practice (CoP) good practices](https://github.com/redhat-cop/automation-good-practices).
 
+Each `ansible-*` plugin directory also conforms to the [Agent Plugins](https://agent-plugins.org/specification) v1.0.0 specification (root `plugin.json`, flat `skills/`), so the same packages work in Agent Plugins clients as well as Claude Code. Skill content follows [agentskills.io](https://agentskills.io/specification).
+
 ## Skills
 
 ### ansible-good-practices
@@ -79,18 +81,25 @@ Display the Zen of Ansible and review code against its 20 principles.
 
 ## Project Structure
 
-Each top-level `ansible-*` directory is a standalone Claude Code **plugin** with:
+Each top-level `ansible-*` directory is a standalone **plugin** with a portable Agent Plugins layout plus a Claude Code sidecar:
 
 ```
-ansible-good-practices/
+ansible-<name>/
+├── plugin.json              # Agent Plugins v1.0.0 manifest
+├── mcp.json                 # Optional Agent Plugins MCP config
 ├── .claude-plugin/
-│   └── plugin.json          # Plugin metadata (name, version, description)
+│   └── plugin.json          # Claude Code plugin metadata
 └── skills/
-    └── ansible-good-practices/
-        └── SKILL.md          # Skill prompt definition
+    └── ansible-<name>/
+        └── SKILL.md          # agentskills.io skill definition
 ```
 
-The root `.claude-plugin/marketplace.json` indexes all plugins for marketplace discovery.
+- Root `plugin.json` is the Agent Plugins manifest (`$schema`, `name`, version, description, license, keywords).
+- `mcp.json` is present only on `ansible-docs` and `ansible-good-practices` (stdio `uvx ansible-know-mcp`).
+- `.claude-plugin/` stays for Claude Code marketplace install and does not replace root `plugin.json`.
+- `skills/` is flat: one level of `<skill-name>/SKILL.md` children, as Agent Plugins discovery requires.
+
+The root `.claude-plugin/marketplace.json` indexes all plugins for Claude Code marketplace discovery.
 
 ## Installation
 
@@ -177,17 +186,21 @@ We welcome contributions from the community. This project follows the
 ### Adding a new skill
 
 1. Create a directory named `ansible-<skill-name>/`
-2. Add `.claude-plugin/plugin.json` with name, version, and description
-3. Add `skills/<skill-name>/SKILL.md` with frontmatter and prompt body
-4. Follow the [SKILL.md format](https://code.claude.com/docs/en/skills):
+2. Add root `plugin.json` (Agent Plugins v1.0.0) with `$schema` set to
+   `https://agent-plugins.org/schemas/1.0.0/plugin.schema.json`. `name` must
+   be lowercase alphanumeric plus hyphens/dots, max 64 characters.
+3. Add `.claude-plugin/plugin.json` with name, version, and description
+4. Add `skills/<skill-name>/SKILL.md` with frontmatter and prompt body
+5. Add root `mcp.json` only if the skill requires an MCP server at runtime
+6. Follow the [SKILL.md format](https://code.claude.com/docs/en/skills):
    - Description must include what the skill does, when to use it, and
      trigger phrases users would say
    - Add `argument-hint` if the skill accepts arguments
    - Add `disable-model-invocation: true` for skills with side effects
    - Keep SKILL.md under 500 lines; move detailed docs to `references/`
-5. Skills should reference CLAUDE.md rules rather than duplicating them
-6. Run `node scripts/gen-marketplace.js` to regenerate the marketplace index
-7. Commit the updated `marketplace.json` alongside your changes
+7. Skills should reference CLAUDE.md rules rather than duplicating them
+8. Run `node scripts/gen-marketplace.js` to regenerate the marketplace index
+9. Commit the updated `marketplace.json` alongside your changes
 
 ### Modifying existing skills
 

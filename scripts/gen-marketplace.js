@@ -31,6 +31,27 @@ const plugins = readdirSync('.', { withFileTypes: true })
     const pluginJson = { name, version, description }
     writeFileSync(join(pluginDir, 'plugin.json'), JSON.stringify(pluginJson, null, 2) + '\n')
 
+    // Keep Agent Plugins root plugin.json name/version in sync; preserve other fields
+    const PLUGIN_SCHEMA = 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json'
+    const rootPluginPath = join(d.name, 'plugin.json')
+    if (existsSync(rootPluginPath)) {
+      const root = JSON.parse(readFileSync(rootPluginPath, 'utf8'))
+      root.$schema = PLUGIN_SCHEMA
+      root.name = name
+      root.version = version
+      writeFileSync(rootPluginPath, JSON.stringify(root, null, 2) + '\n')
+    } else {
+      writeFileSync(rootPluginPath, JSON.stringify({
+        $schema: PLUGIN_SCHEMA,
+        name,
+        version,
+        description,
+        author: { name: 'leogallego' },
+        license: 'GPL-3.0-or-later',
+        keywords: ['ansible', name]
+      }, null, 2) + '\n')
+    }
+
     return {
       name,
       source: `./${d.name}`,

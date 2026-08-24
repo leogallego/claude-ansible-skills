@@ -95,7 +95,7 @@ ansible-<name>/
 ```
 
 - Root `plugin.json` is the Agent Plugins manifest (`$schema`, `name`, version, description, license, keywords).
-- `mcp.json` is present only on `ansible-docs` and `ansible-good-practices` (stdio `uvx ansible-know-mcp`).
+- `mcp.json` declares ansible-know (`uvx ansible-know-mcp`) on every skill that requires or is improved by it. Omitted on `ansible-zen`.
 - `.claude-plugin/` stays for Claude Code marketplace install and does not replace root `plugin.json`.
 - `skills/` is flat: one level of `<skill-name>/SKILL.md` children, as Agent Plugins discovery requires.
 
@@ -191,7 +191,11 @@ We welcome contributions from the community. This project follows the
    be lowercase alphanumeric plus hyphens/dots, max 64 characters.
 3. Add `.claude-plugin/plugin.json` with name, version, and description
 4. Add `skills/<skill-name>/SKILL.md` with frontmatter and prompt body
-5. Add root `mcp.json` only if the skill requires an MCP server at runtime
+5. Add root `mcp.json` when the skill requires or is improved by an MCP
+   server at runtime. Current skills declare ansible-know except
+   `ansible-zen`. Agent Plugins has no disable flag in `mcp.json`; users
+   turn servers off in the client (Claude Code `/mcp` or
+   `disabledMcpServers`).
 6. Follow the [SKILL.md format](https://code.claude.com/docs/en/skills):
    - Description must include what the skill does, when to use it, and
      trigger phrases users would say

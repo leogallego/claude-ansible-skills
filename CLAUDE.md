@@ -10,16 +10,22 @@ This repo contains skill definitions, documentation, and a marketplace index for
 
 ## Repository Structure
 
-Each top-level `ansible-*` directory is a standalone Claude Code **plugin**. Plugins follow this layout:
+Each top-level `ansible-*` directory is a standalone **plugin** with a portable Agent Plugins layout plus a Claude Code sidecar:
 
 ```
 ansible-<name>/
+├── plugin.json                  # Agent Plugins v1.0.0 manifest
+├── mcp.json                     # Optional Agent Plugins MCP config
 ├── .claude-plugin/
-│   └── plugin.json              # Plugin metadata (name, version, description)
+│   └── plugin.json              # Claude Code plugin metadata
 └── skills/
     └── ansible-<name>/
-        └── SKILL.md             # Skill prompt definition
+        └── SKILL.md             # agentskills.io skill definition
 ```
+
+- Root `plugin.json` is required (Agent Plugins). `mcp.json` declares ansible-know on every skill except `ansible-zen`.
+- `.claude-plugin/` stays for Claude Code marketplace install.
+- `skills/` is flat: one level of `<skill-name>/SKILL.md`.
 
 The root `.claude-plugin/marketplace.json` indexes all plugins for marketplace discovery.
 
@@ -90,7 +96,8 @@ Bump `metadata.version` in SKILL.md when making meaningful skill changes. The wo
 ## Contributing New Skills
 
 - One plugin directory per skill, following the `ansible-<name>/` convention
-- Each plugin must contain `.claude-plugin/plugin.json` and `skills/<skill-name>/SKILL.md`
+- Each plugin must contain root `plugin.json` (Agent Plugins), `.claude-plugin/plugin.json`, and `skills/<skill-name>/SKILL.md`
+- Add root `mcp.json` when the skill requires or is improved by an MCP server (`ansible-zen` is the only current exception)
 - SKILL.md frontmatter must include all agentskills.io required fields (`name`, `description`) plus Claude Code fields (`user-invocable`). See [Skill File Format](#skill-file-format) for the full schema.
 - The `name` field must match the parent directory name, use only lowercase letters/numbers/hyphens, and be max 64 characters
 - Skills should reference CLAUDE.md rules rather than duplicating them

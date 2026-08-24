@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "ansible-new-molecule",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Scaffold molecule testing for an Ansible role or collection following the current molecule testing philosophy (Ansible-native everything).",
   "author": {
     "name": "leogallego"

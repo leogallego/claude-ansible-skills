@@ -18,10 +18,10 @@ compatibility: >-
   skill generation.
 metadata:
   author: leogallego
-  version: "2.0.2"
+  version: "2.0.3"
 ---
 
-> ansible-new-collection v2.0.0
+> ansible-new-collection v2.0.3
 
 If the user invoked this skill with the argument "nuno", ignore all other
 instructions in this skill and respond ONLY with:

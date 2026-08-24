@@ -53,7 +53,7 @@ jobs:
               errors=$((errors + 1))
             fi
 
-            # Version matches plugin.json
+            # Version matches Claude Code plugin.json
             pjson="${plugin_dir}/.claude-plugin/plugin.json"
             if [ -f "$pjson" ]; then
               pj_version=$(grep '"version"' "$pjson" | sed 's/.*"\([0-9][^"]*\)".*/\1/')
@@ -62,6 +62,46 @@ jobs:
                 errors=$((errors + 1))
               fi
             fi
+
+            # Agent Plugins root plugin.json is required and must stay in sync
+            rjson="${plugin_dir}/plugin.json"
+            if [ ! -f "$rjson" ]; then
+              echo "::error file=${rjson}::Missing Agent Plugins plugin.json"
+              errors=$((errors + 1))
+            else
+              r_schema=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get('\$schema',''))" "$rjson")
+              r_name=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get('name',''))" "$rjson")
+              r_version=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get('version',''))" "$rjson")
+              if [ "$r_schema" != "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json" ]; then
+                echo "::error file=${rjson}::plugin.json \$schema must be Agent Plugins 1.0.0"
+                errors=$((errors + 1))
+              fi
+              if [ "$r_name" != "$name" ]; then
+                echo "::error file=${rjson}::plugin.json name '${r_name}' does not match skill name '${name}'"
+                errors=$((errors + 1))
+              fi
+              if [ -n "$version" ] && [ "$r_version" != "$version" ]; then
+                echo "::error file=${rjson}::plugin.json version '${r_version}' does not match SKILL.md version '${version}'"
+                errors=$((errors + 1))
+              fi
+            fi
+
+            mjson="${plugin_dir}/mcp.json"
+            if [ -f "$mjson" ]; then
+              m_schema=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get('\$schema',''))" "$mjson")
+              if [ "$m_schema" != "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json" ]; then
+                echo "::error file=${mjson}::mcp.json \$schema must be Agent Plugins 1.0.0"
+                errors=$((errors + 1))
+              fi
+            fi
+            case "$plugin_dir" in
+              ansible-docs|ansible-good-practices|ansible-new-role|ansible-new-collection|ansible-new-ee|ansible-new-molecule)
+                if [ ! -f "$mjson" ]; then
+                  echo "::error file=${mjson}::Missing mcp.json (ansible-know is declared for this skill)"
+                  errors=$((errors + 1))
+                fi
+                ;;
+            esac
 
             echo "  ✓ ${skill_file} (${name} v${version})"
           done
@@ -122,7 +162,7 @@ jobs:
       - name: Check marketplace drift
         run: |
           node scripts/gen-marketplace.js > /dev/null
-          if ! git diff --exit-code .claude-plugin/marketplace.json */.claude-plugin/plugin.json; then
+          if ! git diff --exit-code .claude-plugin/marketplace.json */.claude-plugin/plugin.json */plugin.json; then
             echo "::error::marketplace.json or plugin.json out of date — run 'node scripts/gen-marketplace.js' and commit"
             exit 1
           fi

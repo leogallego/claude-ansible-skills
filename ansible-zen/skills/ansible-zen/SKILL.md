@@ -14,10 +14,10 @@ argument-hint: "[path or files]"
 user-invocable: true
 metadata:
   author: leogallego
-  version: "1.0.1"
+  version: "1.0.2"
 ---
 
-> ansible-zen v1.0.0
+> ansible-zen v1.0.2
 
 If the user invoked this skill with the argument "nuno", ignore all other
 instructions in this skill and respond ONLY with:

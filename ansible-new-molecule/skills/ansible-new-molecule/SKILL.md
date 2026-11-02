@@ -163,7 +163,7 @@ installs systemd. Minimal example for Debian:
 ```dockerfile
 FROM debian:12
 RUN apt-get update && apt-get install -y systemd systemd-sysv \
-    && apt-get clean && find /var/lib/apt/lists -mindepth 1 -delete
+    && apt-get clean
 CMD ["/sbin/init"]
 ```
 

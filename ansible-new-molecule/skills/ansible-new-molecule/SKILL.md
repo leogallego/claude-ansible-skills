@@ -163,8 +163,8 @@ installs systemd. Minimal example for Debian:
 ```dockerfile
 FROM debian:12
 RUN apt-get update && apt-get install -y systemd systemd-sysv \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-CMD ["/lib/systemd/systemd"]
+    && apt-get clean && find /var/lib/apt/lists -mindepth 1 -delete
+CMD ["/sbin/init"]
 ```
 
 Then use `community.docker.docker_image_build` or
@@ -187,7 +187,7 @@ available, prefer Podman (Ansible ecosystem standard) but ask the user.
 If systemd containers are needed and Podman is rootless, warn:
 "Rootless Podman + systemd containers can be fragile depending on host kernel,
 cgroup version, and Podman version. If containers fail to start, try rootful
-Podman (`sudo podman`) or Docker as alternatives."
+Podman (run as root) or Docker as alternatives."
 
 ## Generated output
 
@@ -384,7 +384,7 @@ templates.
 
 Generate only if pre-convergence setup is needed:
 - Install prerequisites not managed by the role (e.g., EPEL repo for testing)
-- Set up test-specific configuration (e.g., /etc/hosts entries for multi-node)
+- Set up test-specific configuration (e.g., host name entries for multi-node)
 - Deploy test certificates or keys
 
 If the role has no obvious preparation needs, do NOT generate prepare.yml.

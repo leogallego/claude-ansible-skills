@@ -1,4 +1,4 @@
-# ai-ansible-skills
+# ai-skills-ansible
 
 A collection of [Claude Code](https://claude.ai/code) skills for Ansible automation development following [Red Hat Communities of Practice (CoP) good practices](https://github.com/redhat-cop/automation-good-practices).
 
@@ -108,7 +108,7 @@ The root `.claude-plugin/marketplace.json` indexes all plugins for Claude Code m
 Register the marketplace and install skills as plugins:
 
 ```
-/plugin marketplace add https://github.com/leogallego/ai-ansible-skills
+/plugin marketplace add https://github.com/leogallego/ai-skills-ansible
 /plugin install ansible-good-practices
 /plugin install ansible-new-role
 /plugin install ansible-new-collection
@@ -125,24 +125,24 @@ Alternatively, clone and symlink individual skill directories. Each skill lives 
 **Project-level** (single project):
 
 ```bash
-git clone https://github.com/leogallego/ai-ansible-skills.git
+git clone https://github.com/leogallego/ai-skills-ansible.git
 cd ~/my-ansible-project
 mkdir -p .claude/skills
-ln -s ~/ai-ansible-skills/ansible-good-practices/skills/ansible-good-practices .claude/skills/ansible-good-practices
+ln -s ~/ai-skills-ansible/ansible-good-practices/skills/ansible-good-practices .claude/skills/ansible-good-practices
 ```
 
 **Profile-level** (all projects):
 
 ```bash
 mkdir -p ~/.claude/skills
-ln -s ~/ai-ansible-skills/ansible-new-role/skills/ansible-new-role ~/.claude/skills/ansible-new-role
+ln -s ~/ai-skills-ansible/ansible-new-role/skills/ansible-new-role ~/.claude/skills/ansible-new-role
 ```
 
 **All skills at once** at profile level:
 
 ```bash
 mkdir -p ~/.claude/skills
-for plugin in ~/ai-ansible-skills/ansible-*/; do
+for plugin in ~/ai-skills-ansible/ansible-*/; do
   skill=$(basename "$plugin")
   ln -s "$plugin/skills/$skill" ~/.claude/skills/"$skill"
 done

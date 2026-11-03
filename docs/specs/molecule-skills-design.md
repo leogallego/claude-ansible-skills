@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-02
 **Status:** Draft (open questions resolved 2026-07-02, pending template validation)
-**Based on:** [Roles testing report](report-top50-roles-testing-infra.md), [Collections testing report](report-top50-collections-testing-infra.md), [Molecule testing philosophy](https://docs.ansible.com/projects/molecule/philosophy/)
+**Based on:** [Roles testing report](https://github.com/leogallego/devtools-adoption/blob/main/docs/report-top50-roles-testing-infra.md), [Collections testing report](https://github.com/leogallego/devtools-adoption/blob/main/docs/report-top50-collections-testing-infra.md), [Molecule testing philosophy](https://docs.ansible.com/projects/molecule/philosophy/)
 
 ## Research Summary
 

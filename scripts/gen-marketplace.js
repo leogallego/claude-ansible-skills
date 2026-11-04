@@ -58,7 +58,7 @@ const plugins = readdirSync('.', { withFileTypes: true })
       description,
       version,
       author: owner,
-      repository: 'https://github.com/leogallego/claude-ansible-skills',
+      repository: 'https://github.com/leogallego/ai-skills-ansible',
       license: 'GPL-3.0-or-later',
       tags: ['ansible']
     }
@@ -68,7 +68,7 @@ const plugins = readdirSync('.', { withFileTypes: true })
 
 const marketplace = {
   $schema: 'https://anthropic.com/claude-code/marketplace.schema.json',
-  name: 'claude-ansible-skills',
+  name: 'ai-skills-ansible',
   description: 'Production-grade Claude Code Ansible skills following Red Hat CoP good practices',
   owner,
   plugins

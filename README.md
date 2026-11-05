@@ -106,7 +106,7 @@ ansible-<name>/
 ```
 
 - Root `plugin.json` is the Agent Plugins manifest (`$schema`, `name`, version, description, license, keywords).
-- `mcp.json` declares ansible-know (`uvx ansible-know-mcp`) for clients that implement the Agent Plugins open spec. `.mcp.json` declares the same server in Claude Code's own format — Claude Code does not read the non-dotted `mcp.json` at a plugin's root, only `.mcp.json`; both ship side by side so each client finds its own. Omitted on `ansible-zen` and `ansible-pytest-migrate`.
+- `mcp.json` declares ansible-know, pinned to an exact version (`uvx ansible-know-mcp==<version>`, not a bare package name, to avoid dependency confusion) for clients that implement the Agent Plugins open spec. `.mcp.json` declares the same pinned server in Claude Code's own format — Claude Code does not read the non-dotted `mcp.json` at a plugin's root, only `.mcp.json`; both ship side by side so each client finds its own. Omitted on `ansible-zen` and `ansible-pytest-migrate`.
 - `.claude-plugin/` stays for Claude Code marketplace install and does not replace root `plugin.json`.
 - `skills/` is flat: one level of `<skill-name>/SKILL.md` children, as Agent Plugins discovery requires.
 
@@ -205,13 +205,15 @@ We welcome contributions from the community. This project follows the
 3. Add `.claude-plugin/plugin.json` with name, version, and description
 4. Add `skills/<skill-name>/SKILL.md` with frontmatter and prompt body
 5. Add root `mcp.json` **and** root `.mcp.json` (same `mcpServers` content)
-   when the skill requires or is improved by an MCP server at runtime.
-   Current skills declare ansible-know except `ansible-zen` and
-   `ansible-pytest-migrate`. Claude Code only reads the dotted `.mcp.json`
-   at a plugin's root, not `mcp.json` — ship both so Claude Code and
-   Agent Plugins open-spec clients each find their own file. Agent Plugins
-   has no disable flag in `mcp.json`; users turn servers off in the client
-   (Claude Code `/mcp` or `disabledMcpServers`).
+   when the skill requires or is improved by an MCP server at runtime. Pin
+   the server to an exact version (`ansible-know-mcp==<version>`, not a
+   bare package name) to avoid dependency confusion — check the current
+   version on PyPI before pinning. Current skills declare ansible-know
+   except `ansible-zen` and `ansible-pytest-migrate`. Claude Code only
+   reads the dotted `.mcp.json` at a plugin's root, not `mcp.json` — ship
+   both so Claude Code and Agent Plugins open-spec clients each find their
+   own file. Agent Plugins has no disable flag in `mcp.json`; users turn
+   servers off in the client (Claude Code `/mcp` or `disabledMcpServers`).
 6. Follow the [SKILL.md format](https://code.claude.com/docs/en/skills):
    - Description must include what the skill does, when to use it, and
      trigger phrases users would say

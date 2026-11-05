@@ -3,7 +3,7 @@
     "ansible-know": {
       "command": "uvx",
       "args": [
-        "ansible-know-mcp"
+        "ansible-know-mcp==0.11.0"
       ]
     }
   }

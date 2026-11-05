@@ -15,7 +15,8 @@ Each top-level `ansible-*` directory is a standalone **plugin** with a portable 
 ```
 ansible-<name>/
 ├── plugin.json                  # Agent Plugins v1.0.0 manifest
-├── mcp.json                     # Optional Agent Plugins MCP config
+├── mcp.json                     # Optional Agent Plugins MCP config (open-spec clients)
+├── .mcp.json                    # Optional Claude Code MCP config (same servers, Claude's own format)
 ├── .claude-plugin/
 │   └── plugin.json              # Claude Code plugin metadata
 └── skills/
@@ -23,7 +24,7 @@ ansible-<name>/
         └── SKILL.md             # agentskills.io skill definition
 ```
 
-- Root `plugin.json` is required (Agent Plugins). `mcp.json` declares ansible-know on every skill except `ansible-zen` and `ansible-pytest-migrate`.
+- Root `plugin.json` is required (Agent Plugins). `mcp.json` and `.mcp.json` both declare ansible-know, on every skill except `ansible-zen` and `ansible-pytest-migrate` — `mcp.json` is the Agent Plugins open-spec file (for clients that implement that spec), `.mcp.json` is Claude Code's own separate format. Claude Code does not read the non-dotted `mcp.json`; verified empirically with `claude --plugin-dir <skill> --debug=mcp` — only the dotted `.mcp.json` triggers a connection attempt. Keep both in sync.
 - `.claude-plugin/` stays for Claude Code marketplace install.
 - `skills/` is flat: one level of `<skill-name>/SKILL.md`.
 

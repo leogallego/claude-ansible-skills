@@ -23,7 +23,7 @@ ansible-<name>/
         └── SKILL.md             # agentskills.io skill definition
 ```
 
-- Root `plugin.json` is required (Agent Plugins). `mcp.json` declares ansible-know on every skill except `ansible-zen`.
+- Root `plugin.json` is required (Agent Plugins). `mcp.json` declares ansible-know on every skill except `ansible-zen` and `ansible-pytest-migrate`.
 - `.claude-plugin/` stays for Claude Code marketplace install.
 - `skills/` is flat: one level of `<skill-name>/SKILL.md`.
 
@@ -38,6 +38,7 @@ The root `.claude-plugin/marketplace.json` indexes all plugins for marketplace d
 - **ansible-new-molecule** — Scaffolds molecule testing for an Ansible role or collection following the current molecule testing philosophy (Ansible-native everything). Generates modern molecule.yml (no driver/provisioner/verifier/platforms blocks), self-contained create.yml/destroy.yml playbooks, smart verify.yml from role archetype detection, and optional GitHub Actions CI. Supports Docker and Podman, systemd-aware container strategy, and collection-specific features (nested scenarios, shared state, tox-ansible). Can be called standalone or by ansible-new-role/ansible-new-collection.
 - **ansible-docs** — Answers Ansible questions and reviews code against official documentation from the Ansible ecosystem (ansible-core, ansible-lint, ansible-navigator, ansible-builder, ansible-creator, molecule). Requires the `ansible-know` MCP server for documentation discovery and retrieval via `search_docs` and `fetch_doc` tools. Supports Q&A and code review response modes with source citations.
 - **ansible-zen** — Displays the Zen of Ansible principles and reviews Ansible code against them for simplicity, readability, and clarity. Provides a Zen Score (1-10) and actionable recommendations. Complements ansible-good-practices with philosophical guidance.
+- **ansible-pytest-migrate** — Migrates off, removes, deprecates, or audits the `pytest-ansible` plugin in an Ansible collection repository. Establishes real plugin use (dependencies, imports, plugin-only fixtures, `--ansible-*` options) before editing anything, distinguishing it from ordinary Ansible variables and module mocks. Keeps plain pytest and `ansible-test` in place; only the plugin dependency is removed.
 
 ## Skill File Format
 

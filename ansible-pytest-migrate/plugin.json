@@ -1,0 +1,18 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ansible-pytest-migrate",
+  "version": "1.0.0",
+  "description": "Migrate off, remove, deprecate, or audit the pytest-ansible plugin in an Ansible collection repository. Identifies real plugin use before editing dependencies or test commands, so ordinary Ansible variables and module mocks are never mistaken for plugin use. Use when user says \"remove pytest-ansible\", \"migrate off pytest-ansible\", \"drop the pytest-ansible plugin\", or \"audit pytest-ansible usage\". Plain pytest and ansible-test are retained; only the pytest-ansible plugin is removed. Do NOT use for general Ansible migrations such as FQCN conversion or inventory restructuring, and do NOT use for reviewing Ansible code against CoP good practices (use ansible-good-practices instead).",
+  "author": {
+    "name": "leogallego"
+  },
+  "license": "GPL-3.0-or-later",
+  "keywords": [
+    "ansible",
+    "ansible-pytest-migrate",
+    "pytest",
+    "pytest-ansible",
+    "testing",
+    "migration"
+  ]
+}

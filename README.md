@@ -79,6 +79,16 @@ Display the Zen of Ansible and review code against its 20 principles.
 - Principle-grouped findings with before/after code improvements
 - Complements ansible-good-practices with philosophical guidance
 
+### ansible-pytest-migrate
+
+Migrate off, remove, deprecate, or audit the `pytest-ansible` plugin in an Ansible collection repository.
+
+- Establishes real plugin use first — dependencies, imports, plugin-only fixtures, `--ansible-*` options — before editing anything
+- Distinguishes plugin use from ordinary Ansible variables, module mocks, and the unrelated `pytest-ansible-units` package
+- Smallest-change migration — replaces functional options (e.g. `--ansible-unit-inject-only`) rather than deleting them outright
+- Keeps plain pytest and `ansible-test` in place; only the plugin dependency is removed
+- Validates with the repository's own test entry point and reports what was removed, changed, and run
+
 ## Project Structure
 
 Each top-level `ansible-*` directory is a standalone **plugin** with a portable Agent Plugins layout plus a Claude Code sidecar:
@@ -95,7 +105,7 @@ ansible-<name>/
 ```
 
 - Root `plugin.json` is the Agent Plugins manifest (`$schema`, `name`, version, description, license, keywords).
-- `mcp.json` declares ansible-know (`uvx ansible-know-mcp`) on every skill that requires or is improved by it. Omitted on `ansible-zen`.
+- `mcp.json` declares ansible-know (`uvx ansible-know-mcp`) on every skill that requires or is improved by it. Omitted on `ansible-zen` and `ansible-pytest-migrate`.
 - `.claude-plugin/` stays for Claude Code marketplace install and does not replace root `plugin.json`.
 - `skills/` is flat: one level of `<skill-name>/SKILL.md` children, as Agent Plugins discovery requires.
 
@@ -116,6 +126,7 @@ Register the marketplace and install skills as plugins:
 /plugin install ansible-new-molecule
 /plugin install ansible-docs
 /plugin install ansible-zen
+/plugin install ansible-pytest-migrate
 ```
 
 ### Manual install (symlinks)
@@ -160,6 +171,7 @@ Once installed, invoke skills in Claude Code with their slash command:
 /ansible-new-molecule
 /ansible-docs
 /ansible-zen
+/ansible-pytest-migrate
 ```
 
 ## Dependencies
@@ -193,7 +205,7 @@ We welcome contributions from the community. This project follows the
 4. Add `skills/<skill-name>/SKILL.md` with frontmatter and prompt body
 5. Add root `mcp.json` when the skill requires or is improved by an MCP
    server at runtime. Current skills declare ansible-know except
-   `ansible-zen`. Agent Plugins has no disable flag in `mcp.json`; users
+   `ansible-zen` and `ansible-pytest-migrate`. Agent Plugins has no disable flag in `mcp.json`; users
    turn servers off in the client (Claude Code `/mcp` or
    `disabledMcpServers`).
 6. Follow the [SKILL.md format](https://code.claude.com/docs/en/skills):

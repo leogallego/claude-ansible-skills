@@ -98,6 +98,21 @@
       ]
     },
     {
+      "name": "ansible-pytest-migrate",
+      "source": "./ansible-pytest-migrate",
+      "description": "Migrate off, remove, deprecate, or audit the pytest-ansible plugin in an Ansible collection repository. Identifies real plugin use before editing dependencies or test commands, so ordinary Ansible variables and module mocks are never mistaken for plugin use. Use when user says \"remove pytest-ansible\", \"migrate off pytest-ansible\", \"drop the pytest-ansible plugin\", or \"audit pytest-ansible usage\". Plain pytest and ansible-test are retained; only the pytest-ansible plugin is removed. Do NOT use for general Ansible migrations such as FQCN conversion or inventory restructuring, and do NOT use for reviewing Ansible code against CoP good practices (use ansible-good-practices instead).",
+      "version": "1.0.0",
+      "author": {
+        "name": "Leo Gallego",
+        "email": "leogallego@gmail.com"
+      },
+      "repository": "https://github.com/leogallego/claude-ansible-skills",
+      "license": "GPL-3.0-or-later",
+      "tags": [
+        "ansible"
+      ]
+    },
+    {
       "name": "ansible-zen",
       "source": "./ansible-zen",
       "description": "Display the Zen of Ansible principles and review Ansible code against them. Use when the user wants to see the Zen of Ansible, get philosophical guidance on their automation approach, or review code for simplicity, readability, and clarity. Use when user says \"zen of ansible\", \"simplify my playbook\", \"is this too complex\", or \"clean code review\". Do NOT use for strict rule compliance (use ansible-good-practices instead). Do NOT use for Ansible module reference or documentation lookups (use ansible-docs instead).",

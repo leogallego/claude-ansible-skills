@@ -183,7 +183,82 @@ Custom filter plugins can be written to handle complex or unique use-cases.
 Tasks will be much more legible if data is managed and manipulated via plugins than with in-line Jinja.
 ====
 
+* Use `!unsafe` to prevent Jinja2 from evaluating strings that contain template-like characters.
++
+[%collapsible]
+====
+Explanation:: The `!unsafe` YAML tag marks a string value so that Ansible's Jinja2 templating engine skips evaluation entirely.
+This is necessary when variable values contain `{` or `}` characters — such as regex patterns, configuration snippets from other tools, or any string that uses Jinja2 syntax but must be passed through verbatim.
+
+Rationale:: Without `!unsafe`, Ansible will attempt to evaluate any string containing `{{` as a Jinja2 template expression.
+This causes failures or unexpected substitutions when the string is intentionally literal.
++
+For simple single-expression cases, Jinja2 quoting (`{{ '{{ value }}' }}`) is a valid alternative.
+Prefer `!unsafe` when the string contains multiple brace sequences — such as regex patterns or configuration snippets from third-party tools — where Jinja2 quoting would require escaping each `{{` individually.
+
+.Do this:
+[source,yaml]
+----
+vars:
+  # !unsafe is the clearest option for complex patterns with multiple braces
+  prometheus_query: !unsafe "rate(http_requests_total{job='api'}[5m])"
+
+  # both approaches work for simple single-expression cases
+  grafana_template: !unsafe "{{ server }}"
+  grafana_template_alt: "{{ '{{ server }}' }}"
+----
+
+.Don't do this:
+[source,yaml]
+----
+vars:
+  # Jinja2 will try to evaluate {job='api'} and fail
+  prometheus_query: "rate(http_requests_total{job='api'}[5m])"
+
+  # resolves the 'server' variable instead of passing the literal string {{ server }}
+  grafana_template: "{{ server }}"
+----
+====
+
 == Ansible Guidelines
+
+* Always use Fully Qualified Collection Names (FQCN) for all Ansible modules and plugins.
++
+[%collapsible]
+====
+Explanation:: FQCN uses the format `namespace.collection.module`, for example `ansible.builtin.debug` instead of just `debug`.
+Since Ansible 2.10, collection-provided modules must be referenced by their FQCN to avoid ambiguity when multiple collections define modules with the same short name.
+
+Rationale:: Using short module names can lead to name collisions when working with multiple collections, and may break playbooks as modules move between collections.
+FQCN usage is also enforced by ansible-lint's `production` profile (see the Testing section).
+It makes it explicit which collection provides the module and improves readability by documenting the module's origin directly in the task.
+
+.Do this:
+[source,yaml]
+----
+- name: Print a message
+  ansible.builtin.debug:
+    msg: "Using FQCN ensures there is no ambiguity."
+
+- name: Ensure a package is installed
+  ansible.builtin.package:
+    name: vim
+    state: present
+----
+
+.Don't do this:
+[source,yaml]
+----
+- name: Print a message
+  debug:
+    msg: "Short name is ambiguous and may cause conflicts when multiple collections are in use."
+
+- name: Ensure a package is installed
+  package:
+    name: vim
+    state: present
+----
+====
 
 * Ensure that all tasks are idempotent.
 * https://github.com/ansible/ansible/issues/10374[Ansible variables use lazy evaluation.]
